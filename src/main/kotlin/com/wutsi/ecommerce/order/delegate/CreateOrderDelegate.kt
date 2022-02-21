@@ -21,6 +21,7 @@ import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType
 import com.wutsi.platform.core.error.exception.BadRequestException
 import com.wutsi.platform.core.error.exception.ConflictException
+import com.wutsi.platform.core.logging.KVLogger
 import feign.FeignException
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -33,11 +34,17 @@ class CreateOrderDelegate(
     private val itemDao: OrderItemRepository,
     private val securityManager: SecurityManager,
     private val objectMapper: ObjectMapper,
+    private val logger: KVLogger,
 ) {
     @Transactional
     fun invoke(request: CreateOrderRequest): CreateOrderResponse {
         val order = createOrder(request)
-        createReservation(order)
+        logger.add("order_id", order.id)
+
+        order.reservationId = createReservation(order)
+        logger.add("reservation_id", order.reservationId)
+        orderDao.save(order)
+
         return CreateOrderResponse(id = order.id!!)
     }
 
@@ -77,9 +84,9 @@ class CreateOrderDelegate(
         return order
     }
 
-    private fun createReservation(order: OrderEntity) {
+    private fun createReservation(order: OrderEntity): Long {
         try {
-            catalogApi.createReservation(
+            return catalogApi.createReservation(
                 CreateReservationRequest(
                     orderId = order.id!!,
                     products = order.items.map {
@@ -89,13 +96,21 @@ class CreateOrderDelegate(
                         )
                     }
                 )
-            )
+            ).id
         } catch (ex: FeignException.Conflict) {
             val errorResponse = objectMapper.readValue(ex.contentUTF8(), ErrorResponse::class.java)
             if (errorResponse.error.code == com.wutsi.ecommerce.catalog.error.ErrorURN.OUT_OF_STOCK_ERROR.urn)
                 throw ConflictException(
                     error = Error(
-                        code = ErrorURN.AVAILABILITY_ERROR.urn,
+                        code = ErrorURN.PRODUCT_AVAILABILITY_ERROR.urn,
+                        downstreamCode = errorResponse.error.code,
+                        data = errorResponse.error.data
+                    )
+                )
+            else
+                throw ConflictException(
+                    error = Error(
+                        code = ErrorURN.RESERVATION_ERROR.urn,
                         downstreamCode = errorResponse.error.code,
                         data = errorResponse.error.data
                     )

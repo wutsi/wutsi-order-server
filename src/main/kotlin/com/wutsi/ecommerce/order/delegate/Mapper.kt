@@ -22,4 +22,6 @@ fun OrderEntity.toOrder() = Order(
     items = this.items.map { it.toOrderItem() },
     currency = this.currency,
     totalPrice = this.totalPrice,
+    cancelled = this.cancelled,
+    reservationId = this.reservationId
 )

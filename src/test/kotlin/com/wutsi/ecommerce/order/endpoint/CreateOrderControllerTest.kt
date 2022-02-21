@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.doThrow
 import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.ecommerce.catalog.WutsiCatalogApi
+import com.wutsi.ecommerce.catalog.dto.CreateReservationResponse
 import com.wutsi.ecommerce.catalog.dto.ProductSummary
 import com.wutsi.ecommerce.catalog.dto.SearchProductResponse
 import com.wutsi.ecommerce.catalog.error.ErrorURN
@@ -14,6 +15,7 @@ import com.wutsi.ecommerce.order.dao.OrderRepository
 import com.wutsi.ecommerce.order.dto.CreateOrderItem
 import com.wutsi.ecommerce.order.dto.CreateOrderRequest
 import com.wutsi.ecommerce.order.dto.CreateOrderResponse
+import com.wutsi.ecommerce.order.entity.OrderStatus
 import com.wutsi.platform.core.error.ErrorResponse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -24,6 +26,8 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpClientErrorException
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = ["/db/clean.sql"])
@@ -54,14 +58,16 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
         )
     )
 
+    private val products = listOf(
+        ProductSummary(id = 11L, price = 100.0, currency = "XAF"),
+        ProductSummary(id = 12L, price = 200.0, currency = "XAF")
+    )
+
     @Test
     public fun create() {
         // GIVEN
-        val products = listOf(
-            ProductSummary(id = 11L, price = 100.0, currency = "XAF"),
-            ProductSummary(id = 12L, price = 200.0, currency = "XAF")
-        )
         doReturn(SearchProductResponse(products)).whenever(catalogApi).searchProducts(any())
+        doReturn(CreateReservationResponse(555)).whenever(catalogApi).createReservation(any())
 
         // WHEN
         val url = "http://localhost:$port/v1/orders"
@@ -73,6 +79,10 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
         val order = orderDao.findById(response.body!!.id).get()
         assertEquals(ACCOUNT_ID, order.accountId)
         assertEquals(request.merchantId, order.merchantId)
+        assertEquals(555L, order.reservationId)
+        assertNull(order.cancelled)
+        assertNotNull(order.created)
+        assertEquals(OrderStatus.CREATED, order.status)
 
         val items = itemDao.findByOrder(order)
         assertEquals(2, items.size)
@@ -90,12 +100,7 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
     @Test
     public fun availabilityError() {
         // GIVEN
-        val products = listOf(
-            ProductSummary(id = 11L, price = 100.0, currency = "XAF"),
-            ProductSummary(id = 12L, price = 200.0, currency = "XAF")
-        )
         doReturn(SearchProductResponse(products)).whenever(catalogApi).searchProducts(any())
-
         doThrow(createFeignException(ErrorURN.OUT_OF_STOCK_ERROR.urn)).whenever(catalogApi).createReservation(any())
 
         // WHEN
@@ -108,7 +113,26 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
         assertEquals(409, ex.rawStatusCode)
 
         val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
-        assertEquals(com.wutsi.ecommerce.order.error.ErrorURN.AVAILABILITY_ERROR.urn, response.error.code)
+        assertEquals(com.wutsi.ecommerce.order.error.ErrorURN.PRODUCT_AVAILABILITY_ERROR.urn, response.error.code)
+    }
+
+    @Test
+    public fun reservationError() {
+        // GIVEN
+        doReturn(SearchProductResponse(products)).whenever(catalogApi).searchProducts(any())
+        doThrow(createFeignException(ErrorURN.ILLEGAL_TENANT_ACCESS.urn)).whenever(catalogApi).createReservation(any())
+
+        // WHEN
+        val url = "http://localhost:$port/v1/orders"
+        val ex = assertThrows<HttpClientErrorException> {
+            rest.postForEntity(url, request, CreateOrderResponse::class.java)
+        }
+
+        // THEN
+        assertEquals(409, ex.rawStatusCode)
+
+        val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
+        assertEquals(com.wutsi.ecommerce.order.error.ErrorURN.RESERVATION_ERROR.urn, response.error.code)
     }
 
     @Test

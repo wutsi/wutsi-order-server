@@ -16,6 +16,7 @@ data class OrderEntity(
     val tenantId: Long = -1,
     val merchantId: Long = -1,
     val accountId: Long = -1,
+    var reservationId: Long? = null,
 
     var status: OrderStatus = OrderStatus.CREATED,
     val totalPrice: Double = 0.0,
@@ -25,5 +26,6 @@ data class OrderEntity(
     val items: MutableList<OrderItemEntity> = mutableListOf(),
 
     val created: OffsetDateTime = OffsetDateTime.now(),
-    val updated: OffsetDateTime = OffsetDateTime.now()
+    val updated: OffsetDateTime = OffsetDateTime.now(),
+    var cancelled: OffsetDateTime? = null
 )
