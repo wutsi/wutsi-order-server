@@ -1,5 +1,8 @@
+DROP TABLE T_ORDER_ITEM;
+DROP TABLE T_ORDER;
+
 CREATE TABLE T_ORDER(
-    id              SERIAL NOT NULL,
+    id              VARCHAR(36) NOT NULL,
 
     tenant_id       BIGINT NOT NULL,
     merchant_id     BIGINT NOT NULL,
@@ -18,7 +21,7 @@ CREATE TABLE T_ORDER(
 CREATE TABLE T_ORDER_ITEM(
     id              SERIAL NOT NULL,
 
-    order_fk        BIGINT NOT NULL REFERENCES T_ORDER(id),
+    order_fk        VARCHAR(36) NOT NULL REFERENCES T_ORDER(id),
     product_id      BIGINT NOT NULL,
 
     unit_price      DECIMAL(20,4) NOT NULL DEFAULT 0,
