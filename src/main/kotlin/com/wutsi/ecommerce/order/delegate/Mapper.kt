@@ -13,7 +13,7 @@ fun OrderItemEntity.toOrderItem() = OrderItem(
 )
 
 fun OrderEntity.toOrder() = Order(
-    id = this.id ?: -1,
+    id = this.id ?: "",
     merchantId = this.merchantId,
     accountId = this.accountId,
     status = this.status.name,

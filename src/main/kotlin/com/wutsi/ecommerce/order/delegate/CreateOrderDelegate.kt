@@ -23,6 +23,7 @@ import com.wutsi.platform.core.error.exception.BadRequestException
 import com.wutsi.platform.core.error.exception.ConflictException
 import feign.FeignException
 import org.springframework.stereotype.Service
+import java.util.UUID
 import javax.transaction.Transactional
 
 @Service
@@ -48,6 +49,7 @@ class CreateOrderDelegate(
         // Create the Order
         val order = orderDao.save(
             OrderEntity(
+                id = UUID.randomUUID().toString(),
                 status = OrderStatus.CREATED,
                 merchantId = request.merchantId,
                 tenantId = securityManager.tenantId(),

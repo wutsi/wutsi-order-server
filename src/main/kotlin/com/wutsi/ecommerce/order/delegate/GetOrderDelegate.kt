@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 
 @Service
 public class GetOrderDelegate(private val orderDao: OrderRepository) {
-    public fun invoke(id: Long): GetOrderResponse {
+    public fun invoke(id: String): GetOrderResponse {
         val order = orderDao.findById(id)
             .orElseThrow {
                 NotFoundException(

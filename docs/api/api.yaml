@@ -47,8 +47,8 @@ paths:
           description: ID of the category
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         200:
           description: Success
@@ -63,7 +63,7 @@ paths:
       tags:
         - Order
       security:
-        - api_key: [ 'order-manage' ]
+        - api_key: [ 'order-read' ]
 
 components:
   securitySchemes:
@@ -104,8 +104,8 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           description: ID of the order created
 
     OrderItem:
@@ -130,8 +130,8 @@ components:
       type: object
       properties:
         id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           description: ID of the order
         merchantId:
           type: integer

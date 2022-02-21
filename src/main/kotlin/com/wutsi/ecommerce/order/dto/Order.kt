@@ -8,7 +8,7 @@ import kotlin.String
 import kotlin.collections.List
 
 public data class Order(
-    public val id: Long = 0,
+    public val id: String = "",
     public val merchantId: Long = 0,
     public val accountId: Long = 0,
     public val status: String = "",

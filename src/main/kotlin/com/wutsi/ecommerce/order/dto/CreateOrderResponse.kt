@@ -1,7 +1,7 @@
 package com.wutsi.ecommerce.order.dto
 
-import kotlin.Long
+import kotlin.String
 
 public data class CreateOrderResponse(
-    public val id: Long = 0
+    public val id: String = ""
 )
