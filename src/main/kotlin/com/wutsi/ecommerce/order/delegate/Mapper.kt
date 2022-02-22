@@ -9,7 +9,10 @@ fun OrderItemEntity.toOrderItem() = OrderItem(
     productId = this.productId,
     currency = this.currency,
     unitPrice = this.unitPrice,
-    unitComparablePrice = this.unitComparablePrice,
+    unitComparablePrice = if (this.unitComparablePrice != null && this.unitComparablePrice > this.unitComparablePrice)
+        this.unitComparablePrice
+    else
+        null,
     quantity = this.quantity,
 )
 
