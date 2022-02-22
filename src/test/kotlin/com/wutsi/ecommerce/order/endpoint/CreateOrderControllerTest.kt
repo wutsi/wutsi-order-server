@@ -59,7 +59,7 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
     )
 
     private val products = listOf(
-        ProductSummary(id = 11L, price = 100.0, currency = "XAF"),
+        ProductSummary(id = 11L, price = 100.0, currency = "XAF", comparablePrice = 150.0),
         ProductSummary(id = 12L, price = 200.0, currency = "XAF")
     )
 
@@ -83,17 +83,22 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
         assertNull(order.cancelled)
         assertNotNull(order.created)
         assertEquals(OrderStatus.CREATED, order.status)
+        assertEquals(1700.0, order.subTotalPrice)
+        assertEquals(1200.0, order.totalPrice)
+        assertEquals(500.0, order.savingsAmount)
 
         val items = itemDao.findByOrder(order)
         assertEquals(2, items.size)
         assertEquals(request.items[0].productId, items[0].productId)
         assertEquals(request.items[0].quantity, items[0].quantity)
         assertEquals(products[0].price, items[0].unitPrice)
+        assertEquals(products[0].comparablePrice, items[0].unitComparablePrice)
         assertEquals(products[0].currency, items[0].currency)
 
         assertEquals(request.items[1].productId, items[1].productId)
         assertEquals(request.items[1].quantity, items[1].quantity)
         assertEquals(products[1].price, items[1].unitPrice)
+        assertEquals(products[1].comparablePrice, items[1].unitComparablePrice)
         assertEquals(products[1].currency, items[1].currency)
     }
 

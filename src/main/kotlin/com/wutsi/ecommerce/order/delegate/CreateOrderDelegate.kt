@@ -26,6 +26,7 @@ import feign.FeignException
 import org.springframework.stereotype.Service
 import java.util.UUID
 import javax.transaction.Transactional
+import kotlin.math.max
 
 @Service
 class CreateOrderDelegate(
@@ -52,6 +53,10 @@ class CreateOrderDelegate(
         // Products
         val products = findProducts(request)
         val productMap = products.map { it.id to it }.toMap()
+        val deliveryFees = 0.0
+        val total = computeTotalPrice(request, productMap, deliveryFees)
+        val subTotal = computeSubTotalPrice(request, productMap)
+        val savings = computeSavings(request, productMap)
 
         // Create the Order
         val order = orderDao.save(
@@ -62,7 +67,10 @@ class CreateOrderDelegate(
                 tenantId = securityManager.tenantId(),
                 accountId = securityManager.accountId(),
                 currency = products[0].currency,
-                totalPrice = computeTotalPrice(request, productMap)
+                totalPrice = total,
+                subTotalPrice = subTotal,
+                deliveryFees = 0.0,
+                savingsAmount = savings
             )
         )
 
@@ -77,6 +85,7 @@ class CreateOrderDelegate(
                         unitPrice = product.price ?: 0.0,
                         currency = product.currency,
                         order = order,
+                        unitComparablePrice = product.comparablePrice
                     )
                 )
             }
@@ -145,6 +154,25 @@ class CreateOrderDelegate(
         return products
     }
 
-    private fun computeTotalPrice(request: CreateOrderRequest, productMap: Map<Long, ProductSummary>): Double =
-        request.items.sumOf { it.quantity.toDouble() * (productMap[it.productId]?.price ?: 0.0) }
+    private fun computeTotalPrice(
+        request: CreateOrderRequest,
+        productMap: Map<Long, ProductSummary>,
+        deliveryFees: Double
+    ): Double =
+        request.items.sumOf { it.quantity.toDouble() * (productMap[it.productId]?.price ?: 0.0) } + deliveryFees
+
+    private fun computeSubTotalPrice(request: CreateOrderRequest, productMap: Map<Long, ProductSummary>): Double =
+        request.items.sumOf { it.quantity.toDouble() * (getComparablePrice(productMap[it.productId]!!) ?: 0.0) }
+
+    private fun getComparablePrice(product: ProductSummary): Double? =
+        product.comparablePrice ?: product.price
+
+    private fun computeSavings(request: CreateOrderRequest, productMap: Map<Long, ProductSummary>): Double =
+        request.items.sumOf { it.quantity.toDouble() * getSavings(productMap[it.productId]!!) }
+
+    private fun getSavings(product: ProductSummary): Double =
+        if (product.comparablePrice != null && product.price != null)
+            max(0.0, product.comparablePrice!! - product.price!!)
+        else
+            0.0
 }

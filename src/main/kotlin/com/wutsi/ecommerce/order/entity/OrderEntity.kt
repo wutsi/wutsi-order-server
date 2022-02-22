@@ -20,6 +20,9 @@ data class OrderEntity(
 
     var status: OrderStatus = OrderStatus.CREATED,
     val totalPrice: Double = 0.0,
+    val subTotalPrice: Double = 0.0,
+    val savingsAmount: Double = 0.0,
+    val deliveryFees: Double = 0.0,
     val currency: String = "",
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")

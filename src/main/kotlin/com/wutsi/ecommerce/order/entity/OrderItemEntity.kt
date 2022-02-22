@@ -19,6 +19,7 @@ data class OrderItemEntity(
     val productId: Long = -1,
 
     val unitPrice: Double = 0.0,
+    val unitComparablePrice: Double? = null,
     val currency: String = "",
     val quantity: Int = 0,
 

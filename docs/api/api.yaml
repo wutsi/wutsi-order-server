@@ -145,6 +145,11 @@ components:
           type: number
           format: decimal
           description: Unit price
+        unitComparablePrice:
+          type: number
+          format: decimal
+          description: Unit comparable price
+          nullable: true
         currency:
           type: string
           description: currency
@@ -164,13 +169,30 @@ components:
           type: integer
           format: int64
           description: ID of the customer
+        reservationId:
+          type: integer
+          format: int64
+          description: ID of the reservation associated with Order
+          nullable: true
         status:
           type: string
           description: Description of teh order
+        subTotalPrice:
+          type: number
+          format: double
+          description: Sub Total, which is the total price of the products.
+        deliveryFees:
+          type: number
+          format: double
+          description: Delivery fees
+        savingsAmount:
+          type: number
+          format: double
+          description: Savings amount. Savings are computed by summing for each product, the difference between unit price vs comparable-price
         totalPrice:
           type: number
           format: double
-          description: Amount
+          description: Total price to charge to the customer
         currency:
           type: string
           description: Currency

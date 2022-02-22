@@ -9,6 +9,7 @@ fun OrderItemEntity.toOrderItem() = OrderItem(
     productId = this.productId,
     currency = this.currency,
     unitPrice = this.unitPrice,
+    unitComparablePrice = this.unitComparablePrice,
     quantity = this.quantity,
 )
 
@@ -23,5 +24,8 @@ fun OrderEntity.toOrder() = Order(
     currency = this.currency,
     totalPrice = this.totalPrice,
     cancelled = this.cancelled,
-    reservationId = this.reservationId
+    reservationId = this.reservationId,
+    subTotalPrice = this.subTotalPrice,
+    savingsAmount = this.savingsAmount,
+    deliveryFees = this.deliveryFees
 )
