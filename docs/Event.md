@@ -2,12 +2,12 @@
 
 # Event Consumed
 
-| Event                                             | Source          | Description                                                                                           |
-|---------------------------------------------------|-----------------|-------------------------------------------------------------------------------------------------------|
-| `urn:wutsi:event:payment:transaction-successful`  | wutsi-payment   | This event notify that a payment is received. this module will update the payment status or the Order |
+| Event                                             | Source          | Description                                                                          |
+|---------------------------------------------------|-----------------|--------------------------------------------------------------------------------------|
+| `urn:wutsi:event:payment:transaction-successful`  | wutsi-payment   | This event will update the payment status or the Order or `PAID` or `PARTIALLY_PAID` |
 
 # Event Emmitted
 
-| Event                               | Destination | Description                                                                                   |
-|-------------------------------------|-------------|-----------------------------------------------------------------------------------------------|
-| `urn:wutsi:event:order:order-ready` | wutsi-order | This event is fired after reception of payment event, if the amount of payment >= order price |
+| Event                               | Destination | Description                                                           |
+|-------------------------------------|-------------|-----------------------------------------------------------------------|
+| `urn:wutsi:event:order:order-ready` | wutsi-order | This event is fired to notify that the order is ready to be processed |

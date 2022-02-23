@@ -71,5 +71,5 @@ That's it... the API is up and running! Start sending requests :-)
 # Links
 
 - [API](https://wutsi.github.io/wutsi-order-server/api/)
-- [Event Handling](https://wutsi.github.io/wutsi-order-server/Event.md)
 - [Documentation](docs/)
+- [Event Handling](docs/Event.md)
