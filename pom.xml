@@ -36,6 +36,8 @@
 
     <wutsi-platform-core.version>0.0.101</wutsi-platform-core.version>
     <wutsi-catalog.version>0.0.26</wutsi-catalog.version>
+    <wutsi-security.version>0.0.16</wutsi-security.version>
+    <wutsi-payment.version>0.0.42</wutsi-payment.version>
   </properties>
 
   <dependencies>
@@ -44,6 +46,17 @@
       <artifactId>wutsi-platform-core</artifactId>
       <version>${wutsi-platform-core.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.wutsi.platform.payment</groupId>
+      <artifactId>wutsi-payment-sdk-kotlin</artifactId>
+      <version>${wutsi-payment.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.wutsi.platform.security</groupId>
+      <artifactId>wutsi-security-sdk-kotlin</artifactId>
+      <version>${wutsi-security.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>com.wutsi.ecommerce.catalog</groupId>
       <artifactId>wutsi-catalog-sdk-kotlin</artifactId>

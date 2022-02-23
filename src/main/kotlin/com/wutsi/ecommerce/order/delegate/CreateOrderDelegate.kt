@@ -13,6 +13,7 @@ import com.wutsi.ecommerce.order.dto.CreateOrderResponse
 import com.wutsi.ecommerce.order.entity.OrderEntity
 import com.wutsi.ecommerce.order.entity.OrderItemEntity
 import com.wutsi.ecommerce.order.entity.OrderStatus
+import com.wutsi.ecommerce.order.entity.PaymentStatus
 import com.wutsi.ecommerce.order.error.ErrorURN
 import com.wutsi.ecommerce.order.service.SecurityManager
 import com.wutsi.platform.core.error.Error
@@ -70,7 +71,8 @@ class CreateOrderDelegate(
                 totalPrice = total,
                 subTotalPrice = subTotal,
                 deliveryFees = 0.0,
-                savingsAmount = savings
+                savingsAmount = savings,
+                paymentStatus = if (total <= 0.0) PaymentStatus.PAID else PaymentStatus.PENDING
             )
         )
 

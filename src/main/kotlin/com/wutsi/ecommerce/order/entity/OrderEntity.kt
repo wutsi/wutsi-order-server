@@ -19,6 +19,7 @@ data class OrderEntity(
     var reservationId: Long? = null,
 
     var status: OrderStatus = OrderStatus.CREATED,
+    var paymentStatus: PaymentStatus = PaymentStatus.PENDING,
     val totalPrice: Double = 0.0,
     val subTotalPrice: Double = 0.0,
     val savingsAmount: Double = 0.0,
@@ -30,5 +31,5 @@ data class OrderEntity(
 
     val created: OffsetDateTime = OffsetDateTime.now(),
     val updated: OffsetDateTime = OffsetDateTime.now(),
-    var cancelled: OffsetDateTime? = null
+    var cancelled: OffsetDateTime? = null,
 )

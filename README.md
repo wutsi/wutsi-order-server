@@ -7,25 +7,30 @@
 API for managing orders
 
 # Installation Prerequisites
+
 ## Database Setup
+
 - Install postgres
 - Create account with username/password: `postgres`/`postgres`
 - Create a database named `wutsi-order`
 
 ## Configure Github
+
 - Generate a Github token for accessing packages from GibHub
-  - Goto [https://github.com/settings/tokens](https://github.com/settings/tokens)
-  - Click on `Generate New Token`
-  - Give a value to your token
-  - Select the permissions `read:packages`
-  - Generate the token
+    - Goto [https://github.com/settings/tokens](https://github.com/settings/tokens)
+    - Click on `Generate New Token`
+    - Give a value to your token
+    - Select the permissions `read:packages`
+    - Generate the token
 - Set your GitHub environment variables on your machine:
-  - `GITHUB_TOKEN = your-token-value`
-  - `GITHUB_USER = your-github-user-name`
+    - `GITHUB_TOKEN = your-token-value`
+    - `GITHUB_USER = your-github-user-name`
 
 ## Maven Setup
+
 - Download Instance [Maven 3.6+](https://maven.apache.org/download.cgi)
 - Add into `~/m2/settings.xml`
+
 ```
     <settings>
         ...
@@ -41,18 +46,22 @@ API for managing orders
 ```
 
 ## Usage
+
 - Install
+
 ```
 $ git clone git@github.com:wutsi/wutsi-order-server.git
 ```
 
 - Build
+
 ```
 $ cd wutsi-order-server
 $ mvn clean install
 ```
 
 - Launch the API
+
 ```
 $ mvn spring-boot:run
 ```
@@ -60,5 +69,7 @@ $ mvn spring-boot:run
 That's it... the API is up and running! Start sending requests :-)
 
 # Links
+
 - [API](https://wutsi.github.io/wutsi-order-server/api/)
+- [Event Handling](https://wutsi.github.io/wutsi-order-server/Event.md)
 - [Documentation](docs/)
