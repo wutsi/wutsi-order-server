@@ -25,7 +25,7 @@ import java.util.UUID
 abstract class AbstractEndpointTest {
     companion object {
         const val DEVICE_ID = "0000-1111"
-        const val ACCOUNT_ID = 77777L
+        const val ACCOUNT_ID = 1L
         const val ACCOUNT_NAME = "Ray Sponsible"
         const val TENANT_ID = "1"
     }

@@ -88,6 +88,30 @@ paths:
       security:
         - api_key: [ 'order-manage' ]
 
+  /v1/orders/search:
+    post:
+      operationId: "search-orders"
+      description: Search Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchOrderRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchOrderResponse'
+        403:
+          description: The caller is not authorized to call this endpoint
+      tags:
+        - Product
+      security:
+        - api_key: [ 'order-read' ]
+
 components:
   securitySchemes:
     api_key:
@@ -221,3 +245,102 @@ components:
         order:
           type: object
           $ref: "#/components/schemas/Order"
+
+    OrderSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID of the order
+        merchantId:
+          type: integer
+          format: int64
+          description: ID of the merchant
+        accountId:
+          type: integer
+          format: int64
+          description: ID of the customer
+        reservationId:
+          type: integer
+          format: int64
+          description: ID of the reservation associated with Order
+          nullable: true
+        status:
+          type: string
+          description: Status of the order
+        subTotalPrice:
+          type: number
+          format: double
+          description: Sub Total, which is the total price of the products.
+        deliveryFees:
+          type: number
+          format: double
+          description: Delivery fees
+        savingsAmount:
+          type: number
+          format: double
+          description: Savings amount. Savings are computed by summing for each product, the difference between unit price vs comparable-price
+        totalPrice:
+          type: number
+          format: double
+          description: Total price to charge to the customer
+        currency:
+          type: string
+          description: Currency
+        created:
+          type: string
+          format: date-time
+          description: Creation datetime
+        updated:
+          type: string
+          format: date-time
+          description: Last update
+        cancelled:
+          type: string
+          format: date-time
+          description: Cancellation date-time
+          nullable: true
+
+    SearchOrderRequest:
+      type: object
+      properties:
+        merchantId:
+          type: integer
+          format: int64
+          description: ID of the merchant
+          nullable: true
+        accountId:
+          type: integer
+          format: int64
+          description: ID of the customer
+          nullable: true
+        status:
+          type: array
+          items:
+            type: string
+          description: Status of the order
+        createdFrom:
+          type: string
+          format: date-time
+          description: Creation datetime start date
+          nullable: true
+        createdTo:
+          type: string
+          format: date-time
+          description: Creation datetime start date
+          nullable: true
+        limit:
+          type: integer
+          default: 30
+        offset:
+          type: integer
+          default: 0
+
+    SearchOrderResponse:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderSummary"
