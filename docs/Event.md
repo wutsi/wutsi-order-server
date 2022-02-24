@@ -1,12 +1,12 @@
 # Event Handling
 
-# Event Consumed
+## Event Consumed
 
 | Event                                             | Source          | Description                                                                          |
 |---------------------------------------------------|-----------------|--------------------------------------------------------------------------------------|
 | `urn:wutsi:event:payment:transaction-successful`  | wutsi-payment   | This event will update the payment status or the Order or `PAID` or `PARTIALLY_PAID` |
 
-# Event Emmitted
+## Event Emmitted
 
 | Event                               | Destination | Description                                                           |
 |-------------------------------------|-------------|-----------------------------------------------------------------------|

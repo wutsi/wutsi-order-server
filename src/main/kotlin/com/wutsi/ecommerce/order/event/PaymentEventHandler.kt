@@ -50,7 +50,7 @@ class PaymentEventHandler(
         }
 
         // Log
-        logger.add("payment_received", txs.size)
+        logger.add("payments_received_count", txs.size)
         logger.add("payment_status", order.paymentStatus)
         logger.add("order_status", order.status)
 
