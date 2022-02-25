@@ -33,7 +33,7 @@ class SearchOrdersDelegate(
         return if (where.isNullOrEmpty())
             select
         else
-            "$select WHERE $where ORDER BY O.id DESC"
+            "$select WHERE $where ORDER BY O.created DESC"
     }
 
     private fun select(): String =
