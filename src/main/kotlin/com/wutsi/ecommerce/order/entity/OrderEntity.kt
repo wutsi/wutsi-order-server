@@ -27,7 +27,7 @@ data class OrderEntity(
     val currency: String = "",
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
-    val items: MutableList<OrderItemEntity> = mutableListOf(),
+    var items: List<OrderItemEntity> = emptyList(),
 
     val created: OffsetDateTime = OffsetDateTime.now(),
     val updated: OffsetDateTime = OffsetDateTime.now(),

@@ -77,8 +77,8 @@ class CreateOrderDelegate(
         )
 
         // Items
-        request.items
-            .forEach {
+        order.items = request.items
+            .map {
                 val product = productMap[it.productId]!!
                 itemDao.save(
                     OrderItemEntity(

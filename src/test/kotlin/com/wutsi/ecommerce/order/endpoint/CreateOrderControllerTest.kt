@@ -2,10 +2,13 @@ package com.wutsi.ecommerce.order.endpoint
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.doThrow
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.ecommerce.catalog.WutsiCatalogApi
+import com.wutsi.ecommerce.catalog.dto.CreateReservationRequest
 import com.wutsi.ecommerce.catalog.dto.CreateReservationResponse
 import com.wutsi.ecommerce.catalog.dto.ProductSummary
 import com.wutsi.ecommerce.catalog.dto.SearchProductResponse
@@ -100,6 +103,15 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
         assertEquals(products[1].price, items[1].unitPrice)
         assertEquals(products[1].comparablePrice, items[1].unitComparablePrice)
         assertEquals(products[1].currency, items[1].currency)
+
+        val req = argumentCaptor<CreateReservationRequest>()
+        verify(catalogApi).createReservation(req.capture())
+        assertEquals(order.id, req.firstValue.orderId)
+        assertEquals(2, req.firstValue.products.size)
+        assertEquals(request.items[0].productId, req.firstValue.products[0].productId)
+        assertEquals(request.items[0].quantity, req.firstValue.products[0].quantity)
+        assertEquals(request.items[1].productId, req.firstValue.products[1].productId)
+        assertEquals(request.items[1].quantity, req.firstValue.products[1].quantity)
     }
 
     @Test
