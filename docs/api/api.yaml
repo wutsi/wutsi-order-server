@@ -37,6 +37,30 @@ paths:
       security:
         - api_key: [ 'order-manage' ]
 
+  /v1/orders/search:
+    post:
+      operationId: "search-orders"
+      description: Search Orders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchOrderRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchOrderResponse'
+        403:
+          description: The caller is not authorized to call this endpoint
+      tags:
+        - Order
+      security:
+        - api_key: [ 'order-read' ]
+
   /v1/orders/{id}:
     get:
       operationId: "get-order"
@@ -88,27 +112,79 @@ paths:
       security:
         - api_key: [ 'order-manage' ]
 
-  /v1/orders/search:
+  /v1/orders/{id}/shipping-method:
     post:
-      operationId: "search-orders"
-      description: Search Orders
+      operationId: "set-shipping-method"
+      description: Set Shipping Method
+      parameters:
+        - in: path
+          name: id
+          description: ID of the order
+          required: true
+          schema:
+            type: string
+            format: uuid
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchOrderRequest'
+              $ref: '#/components/schemas/SetShippingMethodRequest'
+      responses:
+        200:
+          description: Success
+        403:
+          description: The caller is not authorized to call this endpoint
+      tags:
+        - Order
+      security:
+        - api_key: [ 'order-manage' ]
+
+  /v1/orders/{id}/shipping-address:
+    post:
+      operationId: "set-shipping-address"
+      description: Set Shipping Address
+      parameters:
+        - in: path
+          name: id
+          description: ID of the order
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetAddressRequest'
+      responses:
+        200:
+          description: Success
+        403:
+          description: The caller is not authorized to call this endpoint
+      tags:
+        - Order
+      security:
+        - api_key: [ 'order-manage' ]
+
+  /v1/addresses:
+    get:
+      operationId: "list-addresses"
+      description: List the addresses of the current user
       responses:
         200:
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SearchOrderResponse'
+                $ref: '#/components/schemas/ListAddressResponse'
         403:
           description: The caller is not authorized to call this endpoint
+        409:
+          description: Error
       tags:
-        - Product
+        - Order
       security:
         - api_key: [ 'order-read' ]
 
@@ -178,6 +254,41 @@ components:
           type: string
           description: currency
 
+    Address:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID of the party
+        firstName:
+          type: string
+          description: Customer First Name
+        lastName:
+          type: string
+          description: Customer Last Name
+        country:
+          type: string
+          description: Country
+        street:
+          type: string
+          description: Street address
+          nullable: true
+        cityId:
+          type: integer
+          format: int64
+          description: ID of the city
+          nullable: true
+        zipCode:
+          type: string
+          description: ZIP code
+          nullable: true
+        email:
+          type: string
+          format: email
+          description: Email address
+          nullable: true
+
     Order:
       type: object
       properties:
@@ -205,10 +316,6 @@ components:
           type: number
           format: double
           description: Sub Total, which is the total price of the products.
-        deliveryFees:
-          type: number
-          format: double
-          description: Delivery fees
         savingsAmount:
           type: number
           format: double
@@ -238,6 +345,18 @@ components:
           format: date-time
           description: Cancellation date-time
           nullable: true
+        shippingId:
+          type: integer
+          format: int64
+          description: Shipping ID
+          nullable: true
+        deliveryFees:
+          type: number
+          format: double
+          description: Delivery fees
+        shippingAddress:
+          type: object
+          $ref: "#/components/schemas/Address"
 
     GetOrderResponse:
       type: object
@@ -344,3 +463,55 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/OrderSummary"
+
+    SetAddressRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: Customer First Name
+        lastName:
+          type: string
+          description: Customer Last Name
+        country:
+          type: string
+          description: Country code
+        street:
+          type: string
+          description: Street address
+          nullable: true
+        cityId:
+          type: integer
+          format: int64
+          description: ID of the city
+          nullable: true
+        zipCode:
+          type: string
+          description: ZIP code
+          nullable: true
+        email:
+          type: string
+          format: email
+          description: Email address
+          nullable: true
+
+    SetShippingMethodRequest:
+      type: object
+      properties:
+        shippingId:
+          type: integer
+          format: int64
+          description: ID of the shipping method
+        shippingRate:
+          type: number
+          format: double
+          description: Shipping Fees
+
+    ListAddressResponse:
+      type: object
+      properties:
+        addresses:
+          type: array
+          items:
+            $ref: "#/components/schemas/Address"
+

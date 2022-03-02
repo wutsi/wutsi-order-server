@@ -1,8 +1,10 @@
 package com.wutsi.ecommerce.order.delegate
 
+import com.wutsi.ecommerce.order.dto.Address
 import com.wutsi.ecommerce.order.dto.Order
 import com.wutsi.ecommerce.order.dto.OrderItem
 import com.wutsi.ecommerce.order.dto.OrderSummary
+import com.wutsi.ecommerce.order.entity.AddressEntity
 import com.wutsi.ecommerce.order.entity.OrderEntity
 import com.wutsi.ecommerce.order.entity.OrderItemEntity
 
@@ -31,7 +33,8 @@ fun OrderEntity.toOrder() = Order(
     reservationId = this.reservationId,
     subTotalPrice = this.subTotalPrice,
     savingsAmount = this.savingsAmount,
-    deliveryFees = this.deliveryFees
+    deliveryFees = this.deliveryFees,
+    shippingId = this.shippingId,
 )
 
 fun OrderEntity.toOrderSummary() = OrderSummary(
@@ -48,4 +51,15 @@ fun OrderEntity.toOrderSummary() = OrderSummary(
     subTotalPrice = this.subTotalPrice,
     savingsAmount = this.savingsAmount,
     deliveryFees = this.deliveryFees
+)
+
+fun AddressEntity.toAddress() = Address(
+    id = this.id ?: -1,
+    firstName = this.firstName,
+    lastName = this.lastName,
+    email = this.email,
+    cityId = this.cityId,
+    country = this.country,
+    street = this.street,
+    zipCode = this.zipCode
 )

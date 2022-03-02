@@ -1,9 +1,14 @@
 package com.wutsi.ecommerce.order.entity
 
+import com.wutsi.ecommerce.order.error.ErrorURN
+import com.wutsi.platform.core.error.Error
+import com.wutsi.platform.core.error.exception.ConflictException
 import java.time.OffsetDateTime
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
 
@@ -23,7 +28,7 @@ data class OrderEntity(
     val totalPrice: Double = 0.0,
     val subTotalPrice: Double = 0.0,
     val savingsAmount: Double = 0.0,
-    val deliveryFees: Double = 0.0,
+    var deliveryFees: Double = 0.0,
     val currency: String = "",
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
@@ -32,4 +37,21 @@ data class OrderEntity(
     val created: OffsetDateTime = OffsetDateTime.now(),
     val updated: OffsetDateTime = OffsetDateTime.now(),
     var cancelled: OffsetDateTime? = null,
-)
+    var shippingId: Long? = null,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipping_address_fk")
+    var shippingAddress: AddressEntity? = null
+) {
+    fun ensureNotClosed() {
+        if (status == OrderStatus.COMPLETED || status == OrderStatus.CANCELLED)
+            throw ConflictException(
+                error = Error(
+                    code = ErrorURN.ILLEGAL_STATUS.urn,
+                    data = mapOf(
+                        "status" to status
+                    )
+                )
+            )
+    }
+}

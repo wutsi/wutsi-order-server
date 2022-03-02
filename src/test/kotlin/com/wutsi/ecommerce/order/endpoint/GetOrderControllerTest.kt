@@ -32,6 +32,7 @@ class GetOrderControllerTest : AbstractEndpointTest() {
         assertEquals(1L, order.accountId)
         assertEquals(OrderStatus.CREATED.name, order.status)
         assertNull(order.cancelled)
+        assertEquals(333L, order.shippingId)
 
         assertEquals(2, order.items.size)
         assertEquals(4, order.items[0].quantity)
