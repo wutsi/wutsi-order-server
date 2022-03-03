@@ -25,7 +25,7 @@ data class OrderEntity(
 
     var status: OrderStatus = OrderStatus.CREATED,
     var paymentStatus: PaymentStatus = PaymentStatus.PENDING,
-    val totalPrice: Double = 0.0,
+    var totalPrice: Double = 0.0,
     val subTotalPrice: Double = 0.0,
     val savingsAmount: Double = 0.0,
     var deliveryFees: Double = 0.0,
@@ -37,12 +37,19 @@ data class OrderEntity(
     val created: OffsetDateTime = OffsetDateTime.now(),
     val updated: OffsetDateTime = OffsetDateTime.now(),
     var cancelled: OffsetDateTime? = null,
+    var expectedDelivered: OffsetDateTime? = null,
     var shippingId: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_address_fk")
     var shippingAddress: AddressEntity? = null
 ) {
+    fun updateTotalPrice() {
+        totalPrice = subTotalPrice + deliveryFees - savingsAmount
+        if (totalPrice <= 0.0)
+            paymentStatus = PaymentStatus.PAID
+    }
+
     fun ensureNotClosed() {
         if (status == OrderStatus.COMPLETED || status == OrderStatus.CANCELLED)
             throw ConflictException(

@@ -38,6 +38,7 @@
     <wutsi-catalog.version>0.0.26</wutsi-catalog.version>
     <wutsi-security.version>0.0.16</wutsi-security.version>
     <wutsi-payment.version>0.0.42</wutsi-payment.version>
+    <wutsi-shipping.version>0.0.6</wutsi-shipping.version>
   </properties>
 
   <dependencies>
@@ -61,6 +62,11 @@
       <groupId>com.wutsi.ecommerce.catalog</groupId>
       <artifactId>wutsi-catalog-sdk-kotlin</artifactId>
       <version>${wutsi-catalog.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.wutsi.ecommerce.shipping</groupId>
+      <artifactId>wutsi-shipping-sdk-kotlin</artifactId>
+      <version>${wutsi-shipping.version}</version>
     </dependency>
 
     <dependency>

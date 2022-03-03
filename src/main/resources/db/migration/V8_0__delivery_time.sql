@@ -1,0 +1,1 @@
+ALTER TABLE T_ORDER ADD COLUMN expected_delivered TIMESTAMPTZ;

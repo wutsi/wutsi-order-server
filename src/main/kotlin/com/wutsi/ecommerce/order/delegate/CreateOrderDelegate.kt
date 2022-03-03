@@ -13,7 +13,6 @@ import com.wutsi.ecommerce.order.dto.CreateOrderResponse
 import com.wutsi.ecommerce.order.entity.OrderEntity
 import com.wutsi.ecommerce.order.entity.OrderItemEntity
 import com.wutsi.ecommerce.order.entity.OrderStatus
-import com.wutsi.ecommerce.order.entity.PaymentStatus
 import com.wutsi.ecommerce.order.error.ErrorURN
 import com.wutsi.ecommerce.order.service.SecurityManager
 import com.wutsi.platform.core.error.Error
@@ -54,27 +53,23 @@ class CreateOrderDelegate(
         // Products
         val products = findProducts(request)
         val productMap = products.map { it.id to it }.toMap()
-        val deliveryFees = 0.0
-        val total = computeTotalPrice(request, productMap, deliveryFees)
         val subTotal = computeSubTotalPrice(request, productMap)
         val savings = computeSavings(request, productMap)
 
         // Create the Order
-        val order = orderDao.save(
-            OrderEntity(
-                id = UUID.randomUUID().toString(),
-                status = OrderStatus.CREATED,
-                merchantId = request.merchantId,
-                tenantId = securityManager.tenantId(),
-                accountId = securityManager.accountId(),
-                currency = products[0].currency,
-                totalPrice = total,
-                subTotalPrice = subTotal,
-                deliveryFees = 0.0,
-                savingsAmount = savings,
-                paymentStatus = if (total <= 0.0) PaymentStatus.PAID else PaymentStatus.PENDING
-            )
+        val order = OrderEntity(
+            id = UUID.randomUUID().toString(),
+            status = OrderStatus.CREATED,
+            merchantId = request.merchantId,
+            tenantId = securityManager.tenantId(),
+            accountId = securityManager.accountId(),
+            currency = products[0].currency,
+            subTotalPrice = subTotal,
+            deliveryFees = 0.0,
+            savingsAmount = savings,
         )
+        order.updateTotalPrice()
+        orderDao.save(order)
 
         // Items
         order.items = request.items
@@ -155,13 +150,6 @@ class CreateOrderDelegate(
 
         return products
     }
-
-    private fun computeTotalPrice(
-        request: CreateOrderRequest,
-        productMap: Map<Long, ProductSummary>,
-        deliveryFees: Double
-    ): Double =
-        request.items.sumOf { it.quantity.toDouble() * (productMap[it.productId]?.price ?: 0.0) } + deliveryFees
 
     private fun computeSubTotalPrice(request: CreateOrderRequest, productMap: Map<Long, ProductSummary>): Double =
         request.items.sumOf { it.quantity.toDouble() * (getComparablePrice(productMap[it.productId]!!) ?: 0.0) }

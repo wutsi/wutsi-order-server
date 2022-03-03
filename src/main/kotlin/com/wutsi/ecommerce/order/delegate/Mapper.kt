@@ -35,6 +35,7 @@ fun OrderEntity.toOrder() = Order(
     savingsAmount = this.savingsAmount,
     deliveryFees = this.deliveryFees,
     shippingId = this.shippingId,
+    expectedDelivered = this.expectedDelivered
 )
 
 fun OrderEntity.toOrderSummary() = OrderSummary(

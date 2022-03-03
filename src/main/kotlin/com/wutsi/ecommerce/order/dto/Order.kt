@@ -26,5 +26,7 @@ public data class Order(
     public val cancelled: OffsetDateTime? = null,
     public val shippingId: Long? = null,
     public val deliveryFees: Double = 0.0,
+    @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
+    public val expectedDelivered: OffsetDateTime? = null,
     public val shippingAddress: Address = Address()
 )
