@@ -30,8 +30,6 @@ class SetShippingMethodDelegate(
     @Transactional
     fun invoke(id: String, request: SetShippingMethodRequest) {
         logger.add("shipping_id", request.shippingId)
-        logger.add("country", request.country)
-        logger.add("cityId", request.cityId)
 
         val order = dao.findById(id)
             .orElseThrow {
@@ -48,6 +46,8 @@ class SetShippingMethodDelegate(
             }
 
         order.ensureNotClosed()
+        logger.add("shipping_country", order.shippingAddress?.country)
+        logger.add("shiping_city_id", order.shippingAddress?.cityId)
 
         val rate = findRate(order, request)
         order.expectedDelivered = rate.deliveryTime?.let { OffsetDateTime.now().plusHours(it.toLong()) }
@@ -72,8 +72,8 @@ class SetShippingMethodDelegate(
         val rates = shippingApi.searchRate(
             SearchRateRequest(
                 shippingId = request.shippingId,
-                country = request.country,
-                cityId = request.cityId,
+                country = order.shippingAddress?.country ?: "",
+                cityId = order.shippingAddress?.cityId,
                 products = order.items.map {
                     val product = products[it.productId]
                         ?: throw ConflictException(

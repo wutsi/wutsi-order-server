@@ -58,8 +58,6 @@ public class SetShippingMethodControllerTest : AbstractEndpointTest() {
         val url = "http://localhost:$port/v1/orders/100/shipping-method"
         val request = SetShippingMethodRequest(
             shippingId = 111L,
-            country = "CM",
-            cityId = 1111L
         )
         val response = rest.postForEntity(url, request, Any::class.java)
 
@@ -79,8 +77,6 @@ public class SetShippingMethodControllerTest : AbstractEndpointTest() {
         val url = "http://localhost:$port/v1/orders/130/shipping-method"
         val request = SetShippingMethodRequest(
             shippingId = 111L,
-            country = "CM",
-            cityId = 1111L
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url, request, Any::class.java)
@@ -97,8 +93,6 @@ public class SetShippingMethodControllerTest : AbstractEndpointTest() {
         val url = "http://localhost:$port/v1/orders/140/shipping-method"
         val request = SetShippingMethodRequest(
             shippingId = 111L,
-            country = "CM",
-            cityId = 1111L
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url, request, Any::class.java)

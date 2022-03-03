@@ -260,13 +260,13 @@ components:
         id:
           type: integer
           format: int64
-          description: ID of the party
+          description: ID of the address
         firstName:
           type: string
-          description: Customer First Name
+          description: First Name
         lastName:
           type: string
-          description: Customer Last Name
+          description: Last Name
         country:
           type: string
           description: Country
@@ -472,6 +472,14 @@ components:
     SetAddressRequest:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
+          description: |
+            ID of the address:
+            - If not `null`, the address associated with this ID will be associated with the order
+            - If `null`, a new address will be created and associated with the order
+          nullable: true
         firstName:
           type: string
           description: Customer First Name
@@ -507,16 +515,6 @@ components:
           type: integer
           format: int64
           description: ID of the shipping method
-        country:
-          type: string
-          description: Delivery country
-        cityId:
-          type: integer
-          format: int64
-          description: Delivery city
-          nullable: true
-      required:
-        - country
 
     ListAddressResponse:
       type: object
