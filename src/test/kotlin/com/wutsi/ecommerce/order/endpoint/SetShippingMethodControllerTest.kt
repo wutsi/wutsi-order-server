@@ -2,7 +2,9 @@ package com.wutsi.ecommerce.order.endpoint
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.ecommerce.catalog.WutsiCatalogApi
 import com.wutsi.ecommerce.catalog.dto.ProductSummary
@@ -13,6 +15,7 @@ import com.wutsi.ecommerce.order.dto.SetShippingMethodRequest
 import com.wutsi.ecommerce.order.error.ErrorURN
 import com.wutsi.ecommerce.shipping.WutsiShippingApi
 import com.wutsi.ecommerce.shipping.dto.RateSummary
+import com.wutsi.ecommerce.shipping.dto.SearchRateRequest
 import com.wutsi.ecommerce.shipping.dto.SearchRateResponse
 import com.wutsi.platform.core.error.ErrorResponse
 import org.junit.jupiter.api.Test
@@ -70,6 +73,18 @@ public class SetShippingMethodControllerTest : AbstractEndpointTest() {
         assertEquals(fmt.format(delivered), fmt.format(order.expectedDelivered))
         assertEquals(rate.rate, order.deliveryFees)
         assertEquals(1000.0, order.totalPrice)
+
+        val req = argumentCaptor<SearchRateRequest>()
+        verify(shippingApi).searchRate(req.capture())
+        assertEquals("FR", req.firstValue.country)
+        assertEquals(1000, req.firstValue.cityId)
+        assertEquals(request.shippingId, req.firstValue.shippingId)
+        assertEquals(11L, req.firstValue.accountId)
+        assertEquals(2, req.firstValue.products.size)
+        assertEquals(products[0].id, req.firstValue.products[0].productId)
+        assertEquals(products[0].type, req.firstValue.products[0].productType)
+        assertEquals(products[1].id, req.firstValue.products[1].productId)
+        assertEquals(products[1].type, req.firstValue.products[1].productType)
     }
 
     @Test

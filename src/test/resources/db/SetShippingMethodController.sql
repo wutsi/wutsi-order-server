@@ -1,4 +1,4 @@
-INSERT INTO T_ADDRESS(id, account_id, tenant_id, city_id, country) VALUES(100, 1, 1, 1000, 'CM');
+INSERT INTO T_ADDRESS(id, account_id, tenant_id, city_id, country) VALUES(100, 1, 1, 1000, 'FR');
 
 INSERT INTO T_ORDER(id, tenant_id, merchant_id, account_id, reservation_id, status, total_price, sub_total_price, delivery_fees, savings_amount, currency, shipping_address_fk)
     VALUES

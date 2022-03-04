@@ -38,7 +38,7 @@
     <wutsi-catalog.version>0.0.26</wutsi-catalog.version>
     <wutsi-security.version>0.0.16</wutsi-security.version>
     <wutsi-payment.version>0.0.42</wutsi-payment.version>
-    <wutsi-shipping.version>0.0.6</wutsi-shipping.version>
+    <wutsi-shipping.version>0.0.7</wutsi-shipping.version>
   </properties>
 
   <dependencies>

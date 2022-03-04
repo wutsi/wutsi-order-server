@@ -72,6 +72,7 @@ class SetShippingMethodDelegate(
         val rates = shippingApi.searchRate(
             SearchRateRequest(
                 shippingId = request.shippingId,
+                accountId = order.merchantId,
                 country = order.shippingAddress?.country ?: "",
                 cityId = order.shippingAddress?.cityId,
                 products = order.items.map {
