@@ -62,7 +62,7 @@ wutsi:
     name: wutsi-order
 
     jobs:
-      stalled-orders:
+      expire-order:
         cron: "0 */15 * * * *"
 
   platform:

@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 
 @Service
-class StalledOrderCronJob(
+class ExpireOrderCronJob(
     private val dao: OrderRepository,
     private val delegate: CancelOrderDelegate
 ) : AbstractOrderCronJob() {
-    override fun getJobName(): String = "stalled-order"
+    override fun getJobName(): String = "expire-order"
 
-    @Scheduled(cron = "\${wutsi.application.jobs.stalled-orders.cron}")
+    @Scheduled(cron = "\${wutsi.application.jobs.expire-order.cron}")
     override fun run() {
         super.run()
     }

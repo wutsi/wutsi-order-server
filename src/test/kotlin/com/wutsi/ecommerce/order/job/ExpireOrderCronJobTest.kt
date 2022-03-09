@@ -11,14 +11,14 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.test.context.jdbc.Sql
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(value = ["/db/clean.sql", "/db/StalledOrderCronJob.sql"])
-internal class StalledOrderCronJobTest {
+@Sql(value = ["/db/clean.sql", "/db/ExpireOrderCronJob.sql"])
+internal class ExpireOrderCronJobTest {
 
     @MockBean
     private lateinit var delegate: CancelOrderDelegate
 
     @Autowired
-    private lateinit var job: StalledOrderCronJob
+    private lateinit var job: ExpireOrderCronJob
 
     @Test
     fun run() {
