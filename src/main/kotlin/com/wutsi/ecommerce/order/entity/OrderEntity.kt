@@ -39,10 +39,11 @@ data class OrderEntity(
     var cancelled: OffsetDateTime? = null,
     var expectedDelivered: OffsetDateTime? = null,
     var shippingId: Long? = null,
+    val expires: OffsetDateTime = OffsetDateTime.now().plusHours(30),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_address_fk")
-    var shippingAddress: AddressEntity? = null
+    var shippingAddress: AddressEntity? = null,
 ) {
     fun updateTotalPrice() {
         totalPrice = subTotalPrice + deliveryFees - savingsAmount

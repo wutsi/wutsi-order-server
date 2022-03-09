@@ -89,6 +89,7 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
         assertEquals(1700.0, order.subTotalPrice)
         assertEquals(1200.0, order.totalPrice)
         assertEquals(500.0, order.savingsAmount)
+        assertEquals(order.created.plusMinutes(30), order.expires)
 
         val items = itemDao.findByOrder(order)
         assertEquals(2, items.size)

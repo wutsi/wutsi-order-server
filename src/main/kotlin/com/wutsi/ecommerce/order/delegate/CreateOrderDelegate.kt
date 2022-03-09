@@ -24,6 +24,7 @@ import com.wutsi.platform.core.error.exception.ConflictException
 import com.wutsi.platform.core.logging.KVLogger
 import feign.FeignException
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
 import java.util.UUID
 import javax.transaction.Transactional
 import kotlin.math.max
@@ -55,6 +56,7 @@ class CreateOrderDelegate(
         val productMap = products.map { it.id to it }.toMap()
         val subTotal = computeSubTotalPrice(request, productMap)
         val savings = computeSavings(request, productMap)
+        val created = OffsetDateTime.now()
 
         // Create the Order
         val order = OrderEntity(
@@ -67,6 +69,8 @@ class CreateOrderDelegate(
             subTotalPrice = subTotal,
             deliveryFees = 0.0,
             savingsAmount = savings,
+            created = created,
+            expires = created.plusMinutes(30)
         )
         order.updateTotalPrice()
         orderDao.save(order)
