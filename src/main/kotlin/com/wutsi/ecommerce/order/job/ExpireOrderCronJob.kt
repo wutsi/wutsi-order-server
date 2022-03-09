@@ -61,6 +61,5 @@ class ExpireOrderCronJob(
         } finally {
             logger.log()
         }
-
     }
 }
