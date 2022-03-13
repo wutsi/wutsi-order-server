@@ -12,5 +12,5 @@ API for managing orders
 
 # Links
 
+- [Events](docs/Event.md)
 - [API](https://wutsi.github.io/wutsi-order-server/api/)
-- [Documentation](docs/)
