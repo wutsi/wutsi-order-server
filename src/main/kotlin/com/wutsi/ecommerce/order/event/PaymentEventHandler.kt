@@ -41,6 +41,7 @@ class PaymentEventHandler(
         if (txs.isNotEmpty()) {
             val total = txs.sumOf { it.amount }
 
+            order.totalPaid = total
             order.paymentStatus = if (total >= order.totalPrice) PaymentStatus.PAID else PaymentStatus.PARTIALLY_PAID
             if (order.status == OrderStatus.CREATED && order.paymentStatus == PaymentStatus.PAID) {
                 order.status = OrderStatus.READY

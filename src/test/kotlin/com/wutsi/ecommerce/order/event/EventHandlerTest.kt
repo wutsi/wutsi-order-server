@@ -59,6 +59,7 @@ internal class EventHandlerTest : AbstractEndpointTest() {
         val order = dao.findById(orderId).get()
         order.status = OrderStatus.READY
         order.paymentStatus = PaymentStatus.PAID
+        order.totalPaid = 1050.0
 
         verify(eventStream).publish(
             com.wutsi.ecommerce.order.event.EventURN.ORDER_READY.urn,
@@ -84,6 +85,7 @@ internal class EventHandlerTest : AbstractEndpointTest() {
         val order = dao.findById(orderId).get()
         order.status = OrderStatus.READY
         order.paymentStatus = PaymentStatus.PAID
+        order.totalPaid = 1050.0
 
         verify(eventStream).publish(
             com.wutsi.ecommerce.order.event.EventURN.ORDER_READY.urn,
@@ -108,6 +110,7 @@ internal class EventHandlerTest : AbstractEndpointTest() {
         val order = dao.findById(orderId).get()
         order.status = OrderStatus.CREATED
         order.paymentStatus = PaymentStatus.PARTIALLY_PAID
+        order.totalPaid = 100.0
 
         verify(eventStream, never()).publish(any(), any())
     }

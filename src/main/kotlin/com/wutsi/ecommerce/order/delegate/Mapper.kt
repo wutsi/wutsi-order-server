@@ -36,7 +36,9 @@ fun OrderEntity.toOrder() = Order(
     deliveryFees = this.deliveryFees,
     shippingId = this.shippingId,
     expectedDelivered = this.expectedDelivered,
-    shippingAddress = this.shippingAddress?.toAddress()
+    shippingAddress = this.shippingAddress?.toAddress(),
+    paymentStatus = this.paymentStatus.name,
+    totalPaid = this.totalPaid,
 )
 
 fun OrderEntity.toOrderSummary() = OrderSummary(
@@ -52,7 +54,9 @@ fun OrderEntity.toOrderSummary() = OrderSummary(
     reservationId = this.reservationId,
     subTotalPrice = this.subTotalPrice,
     savingsAmount = this.savingsAmount,
-    deliveryFees = this.deliveryFees
+    deliveryFees = this.deliveryFees,
+    paymentStatus = this.paymentStatus.name,
+    totalPaid = this.totalPaid,
 )
 
 fun AddressEntity.toAddress() = Address(

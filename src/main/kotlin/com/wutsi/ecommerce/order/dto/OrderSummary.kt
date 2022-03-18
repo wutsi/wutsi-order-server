@@ -12,10 +12,12 @@ public data class OrderSummary(
     public val accountId: Long = 0,
     public val reservationId: Long? = null,
     public val status: String = "",
+    public val paymentStatus: String = "",
     public val subTotalPrice: Double = 0.0,
     public val deliveryFees: Double = 0.0,
     public val savingsAmount: Double = 0.0,
     public val totalPrice: Double = 0.0,
+    public val totalPaid: Double = 0.0,
     public val currency: String = "",
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     public val created: OffsetDateTime = OffsetDateTime.now(),

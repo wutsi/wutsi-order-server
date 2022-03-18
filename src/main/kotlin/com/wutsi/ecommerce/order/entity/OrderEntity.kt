@@ -26,6 +26,7 @@ data class OrderEntity(
     var status: OrderStatus = OrderStatus.CREATED,
     var paymentStatus: PaymentStatus = PaymentStatus.PENDING,
     var totalPrice: Double = 0.0,
+    var totalPaid: Double = 0.0,
     val subTotalPrice: Double = 0.0,
     val savingsAmount: Double = 0.0,
     var deliveryFees: Double = 0.0,
