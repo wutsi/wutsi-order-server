@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
+import com.wutsi.ecommerce.catalog.WutsiCatalogApi
 import com.wutsi.ecommerce.order.dao.OrderRepository
 import com.wutsi.ecommerce.order.entity.OrderStatus
 import com.wutsi.ecommerce.order.error.ErrorURN
@@ -34,6 +35,9 @@ class CancelOrderControllerTest : AbstractEndpointTest() {
     @Autowired
     private lateinit var orderDao: OrderRepository
 
+    @MockBean
+    private lateinit var catalogApi: WutsiCatalogApi
+
     @Test
     fun cancel() {
         // WHEN
@@ -49,6 +53,8 @@ class CancelOrderControllerTest : AbstractEndpointTest() {
             com.wutsi.ecommerce.order.event.EventURN.ORDER_CANCELLED.urn,
             OrderEventPayload("100")
         )
+
+        verify(catalogApi).cancelReservation(1001)
     }
 
     @Test
@@ -63,6 +69,9 @@ class CancelOrderControllerTest : AbstractEndpointTest() {
 
         val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
         assertEquals(ErrorURN.ILLEGAL_STATUS.urn, response.error.code)
+
+        verify(eventStream, never()).publish(any(), any())
+        verify(catalogApi, never()).cancelReservation(any())
     }
 
     @Test
@@ -76,6 +85,7 @@ class CancelOrderControllerTest : AbstractEndpointTest() {
         assertEquals(true, order.cancelled?.isBefore(OffsetDateTime.now()))
 
         verify(eventStream, never()).publish(any(), any())
+        verify(catalogApi, never()).cancelReservation(any())
     }
 
     @Test
@@ -90,5 +100,6 @@ class CancelOrderControllerTest : AbstractEndpointTest() {
         assertEquals(404, ex.rawStatusCode)
 
         verify(eventStream, never()).publish(any(), any())
+        verify(catalogApi, never()).cancelReservation(any())
     }
 }

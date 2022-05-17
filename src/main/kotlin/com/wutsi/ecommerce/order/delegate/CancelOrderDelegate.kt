@@ -1,5 +1,6 @@
 package com.wutsi.ecommerce.order.`delegate`
 
+import com.wutsi.ecommerce.catalog.WutsiCatalogApi
 import com.wutsi.ecommerce.order.dao.OrderRepository
 import com.wutsi.ecommerce.order.entity.OrderStatus
 import com.wutsi.ecommerce.order.error.ErrorURN
@@ -19,7 +20,8 @@ import javax.transaction.Transactional
 @Service
 class CancelOrderDelegate(
     private val dao: OrderRepository,
-    private val eventStream: EventStream
+    private val eventStream: EventStream,
+    private val catalogApi: WutsiCatalogApi,
 ) {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(CancelOrderDelegate::class.java)
@@ -59,9 +61,15 @@ class CancelOrderDelegate(
                 )
             )
         } else {
+            // Cancel the order
             order.status = OrderStatus.CANCELLED
             order.cancelled = OffsetDateTime.now()
             dao.save(order)
+
+            // Cancel the reservation
+            order.reservationId?.let {
+                catalogApi.cancelReservation(it)
+            }
 
             // Send event
             publish(id)
