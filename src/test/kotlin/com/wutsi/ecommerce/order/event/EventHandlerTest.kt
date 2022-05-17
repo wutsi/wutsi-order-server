@@ -3,15 +3,12 @@ package com.wutsi.ecommerce.order.event
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.never
-import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.ecommerce.order.dao.OrderRepository
 import com.wutsi.ecommerce.order.endpoint.AbstractEndpointTest
 import com.wutsi.ecommerce.order.entity.OrderStatus
 import com.wutsi.ecommerce.order.entity.PaymentStatus
 import com.wutsi.platform.core.stream.Event
-import com.wutsi.platform.core.stream.EventStream
 import com.wutsi.platform.core.stream.EventTracingData
 import com.wutsi.platform.payment.WutsiPaymentApi
 import com.wutsi.platform.payment.dto.SearchTransactionResponse
@@ -39,9 +36,6 @@ internal class EventHandlerTest : AbstractEndpointTest() {
     @MockBean
     private lateinit var paymentApi: WutsiPaymentApi
 
-    @MockBean
-    private lateinit var eventStream: EventStream
-
     @Test
     fun paid() {
         // GIVEN
@@ -60,11 +54,6 @@ internal class EventHandlerTest : AbstractEndpointTest() {
         order.status = OrderStatus.READY
         order.paymentStatus = PaymentStatus.PAID
         order.totalPaid = 1050.0
-
-        verify(eventStream).publish(
-            com.wutsi.ecommerce.order.event.EventURN.ORDER_READY.urn,
-            OrderEventPayload(orderId)
-        )
     }
 
     @Test
@@ -86,11 +75,6 @@ internal class EventHandlerTest : AbstractEndpointTest() {
         order.status = OrderStatus.READY
         order.paymentStatus = PaymentStatus.PAID
         order.totalPaid = 1050.0
-
-        verify(eventStream).publish(
-            com.wutsi.ecommerce.order.event.EventURN.ORDER_READY.urn,
-            OrderEventPayload(orderId)
-        )
     }
 
     @Test
@@ -111,8 +95,6 @@ internal class EventHandlerTest : AbstractEndpointTest() {
         order.status = OrderStatus.CREATED
         order.paymentStatus = PaymentStatus.PARTIALLY_PAID
         order.totalPaid = 100.0
-
-        verify(eventStream, never()).publish(any(), any())
     }
 
     @Test
@@ -129,8 +111,6 @@ internal class EventHandlerTest : AbstractEndpointTest() {
         handler.onEvent(event)
 
         // THEN
-        verify(eventStream, never()).publish(any(), any())
-
         val order = dao.findById(orderId).get()
         order.status = OrderStatus.CREATED
         order.paymentStatus = PaymentStatus.PENDING
@@ -150,8 +130,6 @@ internal class EventHandlerTest : AbstractEndpointTest() {
         handler.onEvent(event)
 
         // THEN
-        verify(eventStream, never()).publish(any(), any())
-
         val order = dao.findById(orderId).get()
         order.status = OrderStatus.CREATED
         order.paymentStatus = PaymentStatus.PENDING
@@ -171,8 +149,6 @@ internal class EventHandlerTest : AbstractEndpointTest() {
         handler.onEvent(event)
 
         // THEN
-        verify(eventStream, never()).publish(any(), any())
-
         val order = dao.findById(orderId).get()
         order.status = OrderStatus.CREATED
         order.paymentStatus = PaymentStatus.PENDING
@@ -190,9 +166,6 @@ internal class EventHandlerTest : AbstractEndpointTest() {
         // WHEN
         val event = createEvent(EventURN.TRANSACTION_SUCCESSFUL.urn, orderId)
         handler.onEvent(event)
-
-        // THEN
-        verify(eventStream, never()).publish(any(), any())
     }
 
     private fun createEvent(

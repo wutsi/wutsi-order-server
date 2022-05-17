@@ -68,7 +68,7 @@ paths:
       parameters:
         - in: path
           name: id
-          description: ID of the category
+          description: ID of the order
           required: true
           schema:
             type: string
@@ -95,7 +95,31 @@ paths:
       parameters:
         - in: path
           name: id
-          description: ID of the category
+          description: ID of the order
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Success
+        403:
+          description: The caller is not authorized to call this endpoint
+        409:
+          description: Error
+      tags:
+        - Order
+      security:
+        - api_key: [ 'order-manage' ]
+
+  /v1/orders/{id}/submit:
+    get:
+      operationId: "submit-order"
+      description: Submit an order
+      parameters:
+        - in: path
+          name: id
+          description: ID of the order
           required: true
           schema:
             type: string
