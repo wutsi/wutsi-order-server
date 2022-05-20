@@ -2,8 +2,13 @@ package com.wutsi.ecommerce.order.endpoint
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
+import com.wutsi.analytics.tracking.WutsiTrackingApi
+import com.wutsi.analytics.tracking.dto.PushTrackRequest
+import com.wutsi.analytics.tracking.entity.EventType
 import com.wutsi.ecommerce.order.dao.OrderRepository
 import com.wutsi.ecommerce.order.entity.OrderStatus
 import com.wutsi.ecommerce.order.error.ErrorURN
@@ -19,18 +24,23 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpClientErrorException
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = ["/db/clean.sql", "/db/SubmitOrderController.sql"])
-public class SubmitOrderControllerTest : AbstractEndpointTest() {
+class SubmitOrderControllerTest : AbstractEndpointTest() {
     @LocalServerPort
-    public val port: Int = 0
+    val port: Int = 0
 
     @Autowired
     private lateinit var dao: OrderRepository
 
     @MockBean
     private lateinit var eventStream: EventStream
+
+    @MockBean
+    private lateinit var trackingApi: WutsiTrackingApi
 
     @Test
     fun created() {
@@ -46,6 +56,39 @@ public class SubmitOrderControllerTest : AbstractEndpointTest() {
             com.wutsi.ecommerce.order.event.EventURN.ORDER_READY.urn,
             OrderEventPayload("100")
         )
+
+        val request = argumentCaptor<PushTrackRequest>()
+        verify(trackingApi, times(2)).push(request.capture())
+
+        val track1 = request.firstValue.track
+        assertEquals(ACCOUNT_ID.toString(), track1.accountId)
+        assertEquals(order.merchantId.toString(), track1.merchantId)
+        assertEquals(TENANT_ID, track1.tenantId)
+        assertEquals(DEVICE_ID, track1.deviceId)
+        assertNotNull(track1.correlationId)
+        assertEquals("11", track1.productId)
+        assertNull(track1.page)
+        assertEquals(EventType.ORDER.name, track1.event)
+        assertNull(track1.impressions)
+        assertNull(track1.lat)
+        assertNull(track1.long)
+        assertNull(track1.url)
+        assertEquals(400.0, track1.value)
+
+        val track2 = request.secondValue.track
+        assertEquals(ACCOUNT_ID.toString(), track2.accountId)
+        assertEquals(order.merchantId.toString(), track2.merchantId)
+        assertEquals(TENANT_ID, track2.tenantId)
+        assertEquals(DEVICE_ID, track2.deviceId)
+        assertEquals(track1.correlationId, track2.correlationId)
+        assertEquals("12", track2.productId)
+        assertNull(track1.page)
+        assertEquals(EventType.ORDER.name, track2.event)
+        assertNull(track2.url)
+        assertNull(track2.impressions)
+        assertNull(track2.lat)
+        assertNull(track2.long)
+        assertEquals(500.0, track2.value)
     }
 
     @Test
@@ -59,6 +102,7 @@ public class SubmitOrderControllerTest : AbstractEndpointTest() {
         assertEquals(OrderStatus.READY, order.status)
 
         verify(eventStream, never()).publish(any(), any())
+        verify(trackingApi, never()).push(any())
     }
 
     @Test
@@ -72,6 +116,9 @@ public class SubmitOrderControllerTest : AbstractEndpointTest() {
 
         val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
         assertEquals(ErrorURN.ILLEGAL_STATUS.urn, response.error.code)
+
+        verify(eventStream, never()).publish(any(), any())
+        verify(trackingApi, never()).push(any())
     }
 
     @Test
@@ -85,6 +132,9 @@ public class SubmitOrderControllerTest : AbstractEndpointTest() {
 
         val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
         assertEquals(ErrorURN.ILLEGAL_STATUS.urn, response.error.code)
+
+        verify(eventStream, never()).publish(any(), any())
+        verify(trackingApi, never()).push(any())
     }
 
     @Test
@@ -98,6 +148,9 @@ public class SubmitOrderControllerTest : AbstractEndpointTest() {
 
         val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
         assertEquals(ErrorURN.ILLEGAL_STATUS.urn, response.error.code)
+
+        verify(eventStream, never()).publish(any(), any())
+        verify(trackingApi, never()).push(any())
     }
 
     @Test

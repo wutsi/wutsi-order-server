@@ -8,7 +8,7 @@ API for managing Orders
 
 # Architecture
 
-![](https://www.plantuml.com/plantuml/png/TP112i8m44NtSugXhkC1N9HkF81BaIocpTW6sabe9bGftjrI5BJYzl_tXk5NIMdKFFJGX246OL4Ce-CHvu_aCcLDtgo5nTsP-pvCW8wKQagCXQkB6V2BCwwsW0-0ZMrC-Sijs2bpPZGR6ZOo7czDHz8ol9j8zu55BUvBN6ySy1KP2UgllY7rGU3l5wdpCNffBK35ufOjdW00)
+![](https://www.plantuml.com/plantuml/png/XOuzJWCn48NxESKerEO0MqHfE00bGYaczcHZOOyjUqo8LjoTrGh3WbPA-zxtVWvLgMYB0MoAEGcBOYgE2quhvVNQj7gp6APoUUTon8SN3Y5T0HqfdQWoxjnfDm7-mO-0dm3R3SRi_x4p-jouCPhj16ptuDE7lP2C31t8T8ii-eCyxd4f7h0xajIVlINrIU3UlNhnENiPkpVWoFghdfahz0_pLezf8VksYk60IRvN2fExmO75jHY-0000)
 
 # Links
 

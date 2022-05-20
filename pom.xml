@@ -39,6 +39,7 @@
     <wutsi-security.version>0.0.16</wutsi-security.version>
     <wutsi-payment.version>0.0.42</wutsi-payment.version>
     <wutsi-shipping.version>0.0.7</wutsi-shipping.version>
+    <wutsi-tracking.version>0.0.17</wutsi-tracking.version>
   </properties>
 
   <dependencies>
@@ -56,6 +57,12 @@
       <groupId>com.wutsi.platform.security</groupId>
       <artifactId>wutsi-security-sdk-kotlin</artifactId>
       <version>${wutsi-security.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.wutsi.analytics.tracking</groupId>
+      <artifactId>wutsi-tracking-sdk-kotlin</artifactId>
+      <version>${wutsi-tracking.version}</version>
     </dependency>
 
     <dependency>
