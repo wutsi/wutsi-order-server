@@ -86,7 +86,8 @@ class SetShippingMethodDelegate(
 
                     Product(
                         productId = it.productId,
-                        productType = product.type
+                        productType = product.type,
+                        quantity = it.quantity
                     )
                 }
             )
