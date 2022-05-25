@@ -27,7 +27,7 @@ internal class ExpireOrderCronJobTest {
         job.run()
 
         verify(delegate, times(2)).invoke(any(), any())
-        verify(delegate).invoke("111", ChangeStatusRequest(OrderStatus.CANCELLED.name, "expired"))
-        verify(delegate).invoke("900", ChangeStatusRequest(OrderStatus.CANCELLED.name, "expired"))
+        verify(delegate).invoke("111", ChangeStatusRequest(OrderStatus.EXPIRED.name))
+        verify(delegate).invoke("900", ChangeStatusRequest(OrderStatus.EXPIRED.name))
     }
 }

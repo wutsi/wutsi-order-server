@@ -73,12 +73,21 @@ public class ChangeStatusDelegate(
             open(order, request)
         else if (OrderStatus.DONE.name.equals(request.status, true))
             done(order, request)
+        else if (OrderStatus.EXPIRED.name.equals(request.status, true))
+            expire(order, request)
         else
             invalidStatus(order.status, request)
     }
 
+    private fun expire(order: OrderEntity, request: ChangeStatusRequest) {
+        if (order.status != OrderStatus.CREATED)
+            throw invalidStatus(order.status, request)
+
+        changeStatus(order, request, null)
+    }
+
     private fun cancel(order: OrderEntity, request: ChangeStatusRequest) {
-        if (order.status != OrderStatus.CREATED && order.status != OrderStatus.OPENED)
+        if (order.status != OrderStatus.OPENED)
             throw invalidStatus(order.status, request)
 
         changeStatus(order, request, null)

@@ -113,4 +113,20 @@ class ChangeStatusControllerDoneTest : AbstractEndpointTest() {
 
         verify(eventStream, never()).publish(any(), any())
     }
+
+    @Test
+    fun expired() {
+        // WHEN
+        val url = "http://localhost:$port/v1/orders/104/status"
+        val ex = assertThrows<HttpClientErrorException> {
+            rest.postForEntity(url, ChangeStatusRequest(status = OrderStatus.DONE.name), Any::class.java)
+        }
+
+        assertEquals(409, ex.rawStatusCode)
+
+        val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
+        assertEquals(ErrorURN.ILLEGAL_STATUS.urn, response.error.code)
+
+        verify(eventStream, never()).publish(any(), any())
+    }
 }

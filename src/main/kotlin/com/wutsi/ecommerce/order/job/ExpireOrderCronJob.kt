@@ -34,7 +34,7 @@ class ExpireOrderCronJob(
             orders.forEach {
                 val tc = initTracingContext(it)
                 try {
-                    cancel(it)
+                    expire(it)
                     count++
                 } finally {
                     restoreTracingContext(tc)
@@ -49,7 +49,7 @@ class ExpireOrderCronJob(
         return count
     }
 
-    private fun cancel(order: OrderEntity) {
+    private fun expire(order: OrderEntity) {
         val logger = DefaultKVLogger()
         logger.add("order_id", order.id)
         logger.add("order_created", order.created)
@@ -58,10 +58,7 @@ class ExpireOrderCronJob(
         try {
             delegate.invoke(
                 id = order.id ?: "",
-                request = ChangeStatusRequest(
-                    status = OrderStatus.CANCELLED.name,
-                    reason = "expired"
-                )
+                request = ChangeStatusRequest(status = OrderStatus.EXPIRED.name)
             )
         } catch (ex: Exception) {
             logger.setException(ex)
