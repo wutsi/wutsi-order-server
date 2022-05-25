@@ -51,7 +51,7 @@ internal class EventHandlerTest : AbstractEndpointTest() {
 
         // THEN
         val order = dao.findById(orderId).get()
-        order.status = OrderStatus.READY
+        order.status = OrderStatus.OPENED
         order.paymentStatus = PaymentStatus.PAID
         order.totalPaid = 1050.0
     }
@@ -72,7 +72,7 @@ internal class EventHandlerTest : AbstractEndpointTest() {
 
         // THEN
         val order = dao.findById(orderId).get()
-        order.status = OrderStatus.READY
+        order.status = OrderStatus.OPENED
         order.paymentStatus = PaymentStatus.PAID
         order.totalPaid = 1050.0
     }

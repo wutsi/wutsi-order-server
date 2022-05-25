@@ -10,4 +10,5 @@ enum class ErrorURN(val urn: String) {
     INVALID_PRODUCT_ID("urn:wutsi:error:order:invalid-product-id"),
     PRODUCT_AVAILABILITY_ERROR("urn:wutsi:error:order:product-availability-error"),
     RESERVATION_ERROR("urn:wutsi:error:order:reservation-error"),
+    PERMISSION_DENIED("urn:wutsi:error:order:permission-denied"),
 }

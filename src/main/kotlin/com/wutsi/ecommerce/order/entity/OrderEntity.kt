@@ -37,7 +37,6 @@ data class OrderEntity(
 
     val created: OffsetDateTime = OffsetDateTime.now(),
     val updated: OffsetDateTime = OffsetDateTime.now(),
-    var cancelled: OffsetDateTime? = null,
     var expectedDelivered: OffsetDateTime? = null,
     var shippingId: Long? = null,
     val expires: OffsetDateTime = OffsetDateTime.now().plusHours(30),
@@ -53,7 +52,7 @@ data class OrderEntity(
     }
 
     fun ensureNotClosed() {
-        if (status == OrderStatus.COMPLETED || status == OrderStatus.CANCELLED)
+        if (status == OrderStatus.DONE || status == OrderStatus.CANCELLED)
             throw ConflictException(
                 error = Error(
                     code = ErrorURN.ILLEGAL_STATUS.urn,

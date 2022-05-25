@@ -1,7 +1,8 @@
 package com.wutsi.ecommerce.order.job
 
 import com.wutsi.ecommerce.order.dao.OrderRepository
-import com.wutsi.ecommerce.order.delegate.CancelOrderDelegate
+import com.wutsi.ecommerce.order.delegate.ChangeStatusDelegate
+import com.wutsi.ecommerce.order.dto.ChangeStatusRequest
 import com.wutsi.ecommerce.order.entity.OrderEntity
 import com.wutsi.ecommerce.order.entity.OrderStatus
 import com.wutsi.platform.core.logging.DefaultKVLogger
@@ -13,7 +14,7 @@ import java.time.OffsetDateTime
 @Service
 class ExpireOrderCronJob(
     private val dao: OrderRepository,
-    private val delegate: CancelOrderDelegate
+    private val delegate: ChangeStatusDelegate
 ) : AbstractOrderCronJob() {
     override fun getJobName(): String = "expire-order"
 
@@ -55,7 +56,13 @@ class ExpireOrderCronJob(
         logger.add("order_expires", order.expires)
         logger.add("job", getJobName())
         try {
-            delegate.invoke(order.id ?: "")
+            delegate.invoke(
+                id = order.id ?: "",
+                request = ChangeStatusRequest(
+                    status = OrderStatus.CANCELLED.name,
+                    reason = "expired"
+                )
+            )
         } catch (ex: Exception) {
             logger.setException(ex)
         } finally {

@@ -30,7 +30,6 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpClientErrorException
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = ["/db/clean.sql"])
@@ -83,7 +82,6 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
         assertEquals(ACCOUNT_ID, order.accountId)
         assertEquals(request.merchantId, order.merchantId)
         assertEquals(555L, order.reservationId)
-        assertNull(order.cancelled)
         assertNotNull(order.created)
         assertEquals(OrderStatus.CREATED, order.status)
         assertEquals(1700.0, order.subTotalPrice)

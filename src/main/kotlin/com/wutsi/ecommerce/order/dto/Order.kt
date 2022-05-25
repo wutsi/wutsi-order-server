@@ -1,11 +1,7 @@
 package com.wutsi.ecommerce.order.dto
 
-import org.springframework.format.`annotation`.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat
 import java.time.OffsetDateTime
-import kotlin.Double
-import kotlin.Long
-import kotlin.String
-import kotlin.collections.List
 
 public data class Order(
     public val id: String = "",
@@ -24,8 +20,6 @@ public data class Order(
     public val created: OffsetDateTime = OffsetDateTime.now(),
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     public val updated: OffsetDateTime = OffsetDateTime.now(),
-    @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
-    public val cancelled: OffsetDateTime? = null,
     public val shippingId: Long? = null,
     public val deliveryFees: Double = 0.0,
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")

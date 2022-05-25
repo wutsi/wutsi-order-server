@@ -22,7 +22,5 @@ public data class OrderSummary(
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     public val created: OffsetDateTime = OffsetDateTime.now(),
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
-    public val updated: OffsetDateTime = OffsetDateTime.now(),
-    @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
-    public val cancelled: OffsetDateTime? = null
+    public val updated: OffsetDateTime = OffsetDateTime.now()
 )

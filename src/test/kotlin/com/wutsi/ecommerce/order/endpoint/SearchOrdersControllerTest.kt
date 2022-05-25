@@ -59,7 +59,7 @@ class SearchOrdersControllerTest : AbstractEndpointTest() {
     fun search() {
         val request = SearchOrderRequest(
             accountId = 1L,
-            status = listOf(OrderStatus.READY.name, OrderStatus.PROCESSING.name),
+            status = listOf(OrderStatus.OPENED.name, OrderStatus.DONE.name),
             createdFrom = OffsetDateTime.now().minusDays(90),
             createdTo = OffsetDateTime.now()
         )

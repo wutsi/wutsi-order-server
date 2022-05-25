@@ -20,7 +20,7 @@ java -jar ${CODEGEN_JAR} server \
     -service_mqueue \
     -service_database \
     -service_cache \
-    -service_api-key
+    -service_api_key
 
 if [ $? -eq 0 ]
 then
