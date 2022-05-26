@@ -15,6 +15,7 @@ import com.wutsi.ecommerce.catalog.dto.SearchProductResponse
 import com.wutsi.ecommerce.catalog.error.ErrorURN
 import com.wutsi.ecommerce.order.dao.OrderItemRepository
 import com.wutsi.ecommerce.order.dao.OrderRepository
+import com.wutsi.ecommerce.order.dao.OrderStatusRepository
 import com.wutsi.ecommerce.order.dto.CreateOrderItem
 import com.wutsi.ecommerce.order.dto.CreateOrderRequest
 import com.wutsi.ecommerce.order.dto.CreateOrderResponse
@@ -30,6 +31,7 @@ import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpClientErrorException
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = ["/db/clean.sql"])
@@ -45,6 +47,9 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
 
     @MockBean
     private lateinit var catalogApi: WutsiCatalogApi
+
+    @Autowired
+    private lateinit var statusDao: OrderStatusRepository
 
     private val request = CreateOrderRequest(
         merchantId = 11L,
@@ -111,6 +116,11 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
         assertEquals(request.items[0].quantity, req.firstValue.products[0].quantity)
         assertEquals(request.items[1].productId, req.firstValue.products[1].productId)
         assertEquals(request.items[1].quantity, req.firstValue.products[1].quantity)
+
+        val status = statusDao.findByOrder(order)
+        assertEquals(1, status.size)
+        assertEquals(OrderStatus.CREATED, status[0].status)
+        assertNull(status[0].previousStatus)
     }
 
     @Test

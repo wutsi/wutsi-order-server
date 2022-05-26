@@ -8,11 +8,13 @@ import com.wutsi.ecommerce.catalog.dto.ReservationProduct
 import com.wutsi.ecommerce.catalog.dto.SearchProductRequest
 import com.wutsi.ecommerce.order.dao.OrderItemRepository
 import com.wutsi.ecommerce.order.dao.OrderRepository
+import com.wutsi.ecommerce.order.dao.OrderStatusRepository
 import com.wutsi.ecommerce.order.dto.CreateOrderRequest
 import com.wutsi.ecommerce.order.dto.CreateOrderResponse
 import com.wutsi.ecommerce.order.entity.OrderEntity
 import com.wutsi.ecommerce.order.entity.OrderItemEntity
 import com.wutsi.ecommerce.order.entity.OrderStatus
+import com.wutsi.ecommerce.order.entity.OrderStatusEntity
 import com.wutsi.ecommerce.order.error.ErrorURN
 import com.wutsi.ecommerce.order.service.SecurityManager
 import com.wutsi.platform.core.error.Error
@@ -34,6 +36,7 @@ class CreateOrderDelegate(
     private val catalogApi: WutsiCatalogApi,
     private val orderDao: OrderRepository,
     private val itemDao: OrderItemRepository,
+    private val statusDao: OrderStatusRepository,
     private val securityManager: SecurityManager,
     private val objectMapper: ObjectMapper,
     private val logger: KVLogger,
@@ -41,6 +44,7 @@ class CreateOrderDelegate(
     @Transactional
     fun invoke(request: CreateOrderRequest): CreateOrderResponse {
         val order = createOrder(request)
+        createStatus(order)
         logger.add("order_id", order.id)
 
         order.reservationId = createReservation(order)
@@ -126,6 +130,15 @@ class CreateOrderDelegate(
                     )
                 )
         }
+    }
+
+    private fun createStatus(order: OrderEntity) {
+        statusDao.save(
+            OrderStatusEntity(
+                order = order,
+                status = OrderStatus.CREATED
+            )
+        )
     }
 
     private fun findProducts(request: CreateOrderRequest): List<ProductSummary> {
