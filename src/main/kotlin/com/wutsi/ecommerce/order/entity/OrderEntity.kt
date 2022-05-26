@@ -52,7 +52,7 @@ data class OrderEntity(
     }
 
     fun ensureNotClosed() {
-        if (status == OrderStatus.DONE || status == OrderStatus.CANCELLED)
+        if (status == OrderStatus.CANCELLED || status == OrderStatus.EXPIRED)
             throw ConflictException(
                 error = Error(
                     code = ErrorURN.ILLEGAL_STATUS.urn,

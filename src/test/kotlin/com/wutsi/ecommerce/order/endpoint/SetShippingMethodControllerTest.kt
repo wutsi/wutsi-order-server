@@ -1,28 +1,14 @@
 package com.wutsi.ecommerce.order.endpoint
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.argumentCaptor
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
-import com.wutsi.ecommerce.catalog.WutsiCatalogApi
-import com.wutsi.ecommerce.catalog.dto.ProductSummary
-import com.wutsi.ecommerce.catalog.dto.SearchProductResponse
-import com.wutsi.ecommerce.catalog.entity.ProductType
 import com.wutsi.ecommerce.order.dao.OrderRepository
 import com.wutsi.ecommerce.order.dto.SetShippingMethodRequest
 import com.wutsi.ecommerce.order.error.ErrorURN
-import com.wutsi.ecommerce.shipping.WutsiShippingApi
-import com.wutsi.ecommerce.shipping.dto.RateSummary
-import com.wutsi.ecommerce.shipping.dto.SearchRateRequest
-import com.wutsi.ecommerce.shipping.dto.SearchRateResponse
 import com.wutsi.platform.core.error.ErrorResponse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpClientErrorException
@@ -39,28 +25,14 @@ public class SetShippingMethodControllerTest : AbstractEndpointTest() {
     @Autowired
     private lateinit var dao: OrderRepository
 
-    @MockBean
-    private lateinit var shippingApi: WutsiShippingApi
-
-    @MockBean
-    private lateinit var catalogApi: WutsiCatalogApi
-
     @Test
     public fun invoke() {
-        // GIVEN
-        val products = listOf(
-            ProductSummary(id = 11, type = ProductType.PHYSICAL.name),
-            ProductSummary(id = 12, type = ProductType.PHYSICAL.name)
-        )
-        doReturn(SearchProductResponse(products)).whenever(catalogApi).searchProducts(any())
-
-        val rate = RateSummary(shippingId = 111L, rate = 200.0, deliveryTime = 24)
-        doReturn(SearchRateResponse(listOf(rate))).whenever(shippingApi).searchRate(any())
-
         // WHEN
         val url = "http://localhost:$port/v1/orders/100/shipping-method"
         val request = SetShippingMethodRequest(
             shippingId = 111L,
+            deliveryTime = 24,
+            deliveryFees = 200.0
         )
         val response = rest.postForEntity(url, request, Any::class.java)
 
@@ -71,27 +43,17 @@ public class SetShippingMethodControllerTest : AbstractEndpointTest() {
         val order = dao.findById("100").get()
         assertEquals(request.shippingId, order.shippingId)
         assertEquals(fmt.format(delivered), fmt.format(order.expectedDelivered))
-        assertEquals(rate.rate, order.deliveryFees)
+        assertEquals(request.deliveryFees, order.deliveryFees)
         assertEquals(1000.0, order.totalPrice)
-
-        val req = argumentCaptor<SearchRateRequest>()
-        verify(shippingApi).searchRate(req.capture())
-        assertEquals("FR", req.firstValue.country)
-        assertEquals(1000, req.firstValue.cityId)
-        assertEquals(request.shippingId, req.firstValue.shippingId)
-        assertEquals(11L, req.firstValue.accountId)
-        assertEquals(2, req.firstValue.products.size)
-        assertEquals(products[0].id, req.firstValue.products[0].productId)
-        assertEquals(products[0].type, req.firstValue.products[0].productType)
-        assertEquals(products[1].id, req.firstValue.products[1].productId)
-        assertEquals(products[1].type, req.firstValue.products[1].productType)
     }
 
     @Test
-    public fun completed() {
+    public fun expired() {
         val url = "http://localhost:$port/v1/orders/130/shipping-method"
         val request = SetShippingMethodRequest(
             shippingId = 111L,
+            deliveryTime = 24,
+            deliveryFees = 200.0
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url, request, Any::class.java)

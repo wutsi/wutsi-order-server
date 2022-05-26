@@ -8,7 +8,8 @@
 
 ## Event Emitted
 
-| Event                                   | Description                                                                           |
-|-----------------------------------------|---------------------------------------------------------------------------------------|
-| `urn:wutsi:event:order:order-ready`     | This event is fired to notify that the order is ready to be processed by the merchant |
-| `urn:wutsi:event:order:order-cancelled` | This event is fired to notify that the order ha been cancelled                        |
+| Event                                   | Description                                                                                 |
+|-----------------------------------------|---------------------------------------------------------------------------------------------|
+| `urn:wutsi:event:order:order-opened`    | This event is fired to notify that the order is ready to be processed by the merchant       |
+| `urn:wutsi:event:order:order-cancelled` | This event is fired to notify that the order has been cancelled                             |
+| `urn:wutsi:event:order:order-dona`      | This event is fired to notify that the order has has been completed, and ready for shipping |
