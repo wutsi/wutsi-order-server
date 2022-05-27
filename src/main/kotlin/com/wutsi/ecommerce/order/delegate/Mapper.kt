@@ -38,6 +38,7 @@ fun OrderEntity.toOrder() = Order(
     shippingAddress = this.shippingAddress?.toAddress(),
     paymentStatus = this.paymentStatus.name,
     totalPaid = this.totalPaid,
+    shippingOrderId = this.shippingOrderId,
 )
 
 fun OrderEntity.toOrderSummary() = OrderSummary(
