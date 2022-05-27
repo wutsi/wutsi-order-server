@@ -39,6 +39,7 @@ data class OrderEntity(
     val updated: OffsetDateTime = OffsetDateTime.now(),
     var expectedDelivered: OffsetDateTime? = null,
     var shippingId: Long? = null,
+    var shippingOrderId: Long? = null,
     val expires: OffsetDateTime = OffsetDateTime.now().plusHours(30),
 
     @ManyToOne(fetch = FetchType.LAZY)
