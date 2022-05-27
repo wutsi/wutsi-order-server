@@ -6,6 +6,7 @@ import com.wutsi.ecommerce.order.dto.SetAddressRequest
 import com.wutsi.ecommerce.order.entity.AddressEntity
 import com.wutsi.ecommerce.order.entity.OrderEntity
 import com.wutsi.ecommerce.order.error.ErrorURN
+import com.wutsi.ecommerce.order.service.SecurityManager
 import com.wutsi.platform.core.error.Error
 import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType
@@ -16,7 +17,8 @@ import org.springframework.stereotype.Service
 @Service
 class SetShippingAddressDelegate(
     private val dao: OrderRepository,
-    private val addressDao: AddressRepository
+    private val addressDao: AddressRepository,
+    private val securityManager: SecurityManager
 ) {
     fun invoke(id: String, request: SetAddressRequest) {
         val order = dao.findById(id)
@@ -32,7 +34,7 @@ class SetShippingAddressDelegate(
                     )
                 )
             }
-
+        securityManager.checkTenant(order)
         order.ensureNotClosed()
 
         order.shippingAddress = getAddress(order, request)

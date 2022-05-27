@@ -64,6 +64,7 @@ public class ChangeStatusDelegate(
                 )
             }
         logger.add("order_status", order.status)
+        securityManager.checkTenant(order)
 
         if (order.status.name.equals(request.status, true))
             return // Nothing

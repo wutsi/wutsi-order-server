@@ -3,6 +3,7 @@ package com.wutsi.ecommerce.order.`delegate`
 import com.wutsi.ecommerce.order.dao.OrderRepository
 import com.wutsi.ecommerce.order.dto.SetShippingMethodRequest
 import com.wutsi.ecommerce.order.error.ErrorURN
+import com.wutsi.ecommerce.order.service.SecurityManager
 import com.wutsi.platform.core.error.Error
 import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType
@@ -15,7 +16,8 @@ import javax.transaction.Transactional
 @Service
 class SetShippingMethodDelegate(
     private val dao: OrderRepository,
-    private val logger: KVLogger
+    private val logger: KVLogger,
+    private val securityManager: SecurityManager
 ) {
     @Transactional
     fun invoke(id: String, request: SetShippingMethodRequest) {
@@ -34,8 +36,9 @@ class SetShippingMethodDelegate(
                     )
                 )
             }
-
+        securityManager.checkTenant(order)
         order.ensureNotClosed()
+
         logger.add("shipping_country", order.shippingAddress?.country)
         logger.add("shiping_city_id", order.shippingAddress?.cityId)
 

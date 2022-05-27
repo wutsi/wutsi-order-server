@@ -34,6 +34,15 @@ class SecurityManager(
             )
     }
 
+    fun checkTenant(order: OrderEntity) {
+        if (order.tenantId != tenantId())
+            throw ForbiddenException(
+                error = Error(
+                    code = ErrorURN.ILLEGAL_TENANT_ACCESS.urn
+                )
+            )
+    }
+
     fun ensureMerchant(order: OrderEntity) {
         if (order.accountId != accountId())
             throw ForbiddenException(
