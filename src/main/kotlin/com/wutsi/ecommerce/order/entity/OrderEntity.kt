@@ -39,7 +39,6 @@ data class OrderEntity(
     val updated: OffsetDateTime = OffsetDateTime.now(),
     var expectedDelivered: OffsetDateTime? = null,
     var shippingId: Long? = null,
-    var shippingOrderId: Long? = null,
     val expires: OffsetDateTime = OffsetDateTime.now().plusHours(30),
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,7 +52,7 @@ data class OrderEntity(
     }
 
     fun ensureNotClosed() {
-        if (status == OrderStatus.CANCELLED || status == OrderStatus.EXPIRED)
+        if (isClosed())
             throw ConflictException(
                 error = Error(
                     code = ErrorURN.ILLEGAL_STATUS.urn,
@@ -63,4 +62,7 @@ data class OrderEntity(
                 )
             )
     }
+
+    fun isClosed(): Boolean =
+        status == OrderStatus.CANCELLED || status == OrderStatus.EXPIRED || status == OrderStatus.DELIVERED
 }

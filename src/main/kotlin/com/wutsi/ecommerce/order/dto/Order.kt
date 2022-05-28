@@ -24,6 +24,5 @@ public data class Order(
     public val deliveryFees: Double = 0.0,
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     public val expectedDelivered: OffsetDateTime? = null,
-    public val shippingAddress: Address? = null,
-    public val shippingOrderId: Long? = null
+    public val shippingAddress: Address? = null
 )

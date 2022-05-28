@@ -1,144 +1,73 @@
 package com.wutsi.ecommerce.order.endpoint
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.wutsi.ecommerce.catalog.WutsiCatalogApi
-import com.wutsi.ecommerce.order.dao.OrderRepository
-import com.wutsi.ecommerce.order.dao.OrderStatusRepository
 import com.wutsi.ecommerce.order.dto.ChangeStatusRequest
 import com.wutsi.ecommerce.order.entity.OrderStatus
-import com.wutsi.ecommerce.order.error.ErrorURN
-import com.wutsi.ecommerce.order.event.OrderEventPayload
-import com.wutsi.platform.core.error.ErrorResponse
-import com.wutsi.platform.core.stream.EventStream
+import com.wutsi.ecommerce.order.event.EventURN
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpClientErrorException
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql(value = ["/db/clean.sql", "/db/ChangeStatusController.sql"])
-class ChangeStatusControllerCancelTest : AbstractEndpointTest() {
-    @LocalServerPort
-    val port: Int = 0
-
-    @MockBean
-    private lateinit var eventStream: EventStream
-
-    @Autowired
-    private lateinit var orderDao: OrderRepository
-
+class ChangeStatusControllerCancelTest : AbstractChangeStatusControllerTest() {
     @MockBean
     private lateinit var catalogApi: WutsiCatalogApi
 
-    @Autowired
-    private lateinit var statusDao: OrderStatusRepository
+    private val status = OrderStatus.CANCELLED
+    private val event = EventURN.ORDER_CANCELLED
 
     @Test
     fun created() {
-        // WHEN
-        val url = "http://localhost:$port/v1/orders/100/status"
-        val ex = assertThrows<HttpClientErrorException> {
-            rest.postForEntity(url, ChangeStatusRequest(status = OrderStatus.CANCELLED.name), Any::class.java)
-        }
-
-        assertEquals(409, ex.rawStatusCode)
-
-        val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
-        assertEquals(ErrorURN.ILLEGAL_STATUS.urn, response.error.code)
-
-        verify(eventStream, never()).publish(any(), any())
+        changeStatusSuccess("100", OrderStatus.CREATED, status, event)
         verify(catalogApi, never()).cancelReservation(any())
     }
 
     @Test
     fun opened() {
-        // WHEN
-        val url = "http://localhost:$port/v1/orders/101/status"
-        rest.postForEntity(
-            url,
-            ChangeStatusRequest(
-                status = OrderStatus.CANCELLED.name,
-                "no_inventory",
-                "None of the product is available"
-            ),
-            Any::class.java
-        )
-
-        // THEN
-        val order = orderDao.findById("101").get()
-        assertEquals(OrderStatus.CANCELLED, order.status)
-
-        verify(eventStream).publish(
-            com.wutsi.ecommerce.order.event.EventURN.ORDER_CANCELLED.urn,
-            OrderEventPayload("101")
-        )
-
+        changeStatusSuccess("101", OrderStatus.OPENED, status, event)
         verify(catalogApi).cancelReservation(1001)
-
-        val statuses = statusDao.findByOrder(order)
-        assertEquals(1, statuses.size)
-        assertEquals("101", statuses[0].order.id)
-        assertEquals(OrderStatus.CANCELLED, statuses[0].status)
-        assertEquals(OrderStatus.OPENED, statuses[0].previousStatus)
-        assertNotNull(statuses[0].created)
-        assertEquals("no_inventory", statuses[0].reason)
-        assertEquals("None of the product is available", statuses[0].comment)
     }
 
     @Test
     fun done() {
-        // WHEN
-        val url = "http://localhost:$port/v1/orders/102/status"
-        val ex = assertThrows<HttpClientErrorException> {
-            rest.postForEntity(url, ChangeStatusRequest(status = OrderStatus.CANCELLED.name), Any::class.java)
-        }
-
-        assertEquals(409, ex.rawStatusCode)
-
-        val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
-        assertEquals(ErrorURN.ILLEGAL_STATUS.urn, response.error.code)
-
-        verify(eventStream, never()).publish(any(), any())
-        verify(catalogApi, never()).cancelReservation(any())
+        changeStatusSuccess("102", OrderStatus.DONE, status, event)
+        verify(catalogApi).cancelReservation(1002)
     }
 
     @Test
     fun cancelled() {
-        // WHEN
-        val url = "http://localhost:$port/v1/orders/103/status"
-        rest.postForEntity(url, ChangeStatusRequest(status = OrderStatus.CANCELLED.name), Any::class.java)
-
-        // THEN
-        val order = orderDao.findById("103").get()
-        assertEquals(OrderStatus.CANCELLED, order.status)
-
-        verify(eventStream, never()).publish(any(), any())
+        changeStatusSuccess("103", OrderStatus.CANCELLED, status, event)
         verify(catalogApi, never()).cancelReservation(any())
     }
 
     @Test
     fun expired() {
+        changeStatusSuccessBadStatus("104", status)
+        verify(catalogApi, never()).cancelReservation(any())
+    }
+
+    @Test
+    fun readyForPickup() {
         // WHEN
-        val url = "http://localhost:$port/v1/orders/104/status"
-        val ex = assertThrows<HttpClientErrorException> {
-            rest.postForEntity(url, ChangeStatusRequest(status = OrderStatus.CANCELLED.name), Any::class.java)
-        }
+        changeStatusSuccess("105", OrderStatus.READY_FOR_PICKUP, status, event)
+        verify(catalogApi).cancelReservation(1005)
+    }
 
-        assertEquals(409, ex.rawStatusCode)
+    @Test
+    fun inTransit() {
+        // WHEN
+        changeStatusSuccess("106", OrderStatus.IN_TRANSIT, status, event)
+        verify(catalogApi).cancelReservation(1006)
+    }
 
-        val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
-        assertEquals(ErrorURN.ILLEGAL_STATUS.urn, response.error.code)
-
-        verify(eventStream, never()).publish(any(), any())
+    @Test
+    fun delivered() {
+        // WHEN
+        changeStatusSuccessBadStatus("107", status)
         verify(catalogApi, never()).cancelReservation(any())
     }
 

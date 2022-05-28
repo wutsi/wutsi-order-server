@@ -89,34 +89,6 @@ paths:
       security:
         - api_key: [ 'order-read' ]
 
-  /v1/orders/{id}/shipping-order:
-    post:
-      operationId: "set-shipping-order"
-      description: Set Shipping Order
-      parameters:
-        - in: path
-          name: id
-          description: ID of the order
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SetShippingOrderRequest'
-      responses:
-        200:
-          description: Success
-        403:
-          description: The caller is not authorized to call this endpoint
-      tags:
-        - Order
-      security:
-        - api_key: [ 'order-manage' ]
-
   /v1/orders/{id}/shipping-method:
     post:
       operationId: "set-shipping-method"
@@ -398,11 +370,6 @@ components:
           type: object
           $ref: "#/components/schemas/Address"
           nullable: true
-        shippingOrderId:
-          type: integer
-          format: int64
-          description: ID of the shipping order
-          nullable: true
 
     GetOrderResponse:
       type: object
@@ -566,14 +533,6 @@ components:
           type: integer
           description: Delivery Time in hours
           nullable: true
-
-    SetShippingOrderRequest:
-      type: object
-      properties:
-        shippingOrderId:
-          type: integer
-          format: int64
-          description: ID of the shipping order
 
     ListAddressResponse:
       type: object

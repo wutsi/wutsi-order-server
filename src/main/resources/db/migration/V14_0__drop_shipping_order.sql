@@ -1,0 +1,1 @@
+ALTER TABLE T_ORDER DROP COLUMN shipping_order_id;

@@ -76,6 +76,12 @@ public class ChangeStatusDelegate(
             done(order, request)
         else if (OrderStatus.EXPIRED.name.equals(request.status, true))
             expire(order, request)
+        else if (OrderStatus.READY_FOR_PICKUP.name.equals(request.status, true))
+            readyForPickup(order, request)
+        else if (OrderStatus.IN_TRANSIT.name.equals(request.status, true))
+            inTransit(order, request)
+        else if (OrderStatus.DELIVERED.name.equals(request.status, true))
+            delivered(order, request)
         else
             invalidStatus(order.status, request)
     }
@@ -88,7 +94,7 @@ public class ChangeStatusDelegate(
     }
 
     private fun cancel(order: OrderEntity, request: ChangeStatusRequest) {
-        if (order.status != OrderStatus.OPENED)
+        if (order.isClosed())
             throw invalidStatus(order.status, request)
 
         changeStatus(order, request, null)
@@ -113,6 +119,27 @@ public class ChangeStatusDelegate(
             throw invalidStatus(order.status, request)
 
         changeStatus(order, request, EventURN.ORDER_DONE)
+    }
+
+    private fun readyForPickup(order: OrderEntity, request: ChangeStatusRequest) {
+        if (order.status != OrderStatus.DONE)
+            throw invalidStatus(order.status, request)
+
+        changeStatus(order, request, EventURN.ORDER_READY_FOR_PICKUP)
+    }
+
+    private fun inTransit(order: OrderEntity, request: ChangeStatusRequest) {
+        if (order.status != OrderStatus.DONE)
+            throw invalidStatus(order.status, request)
+
+        changeStatus(order, request, EventURN.ORDER_IN_TRANSIT)
+    }
+
+    private fun delivered(order: OrderEntity, request: ChangeStatusRequest) {
+        if (order.status != OrderStatus.IN_TRANSIT && order.status != OrderStatus.READY_FOR_PICKUP)
+            throw invalidStatus(order.status, request)
+
+        changeStatus(order, request, EventURN.ORDER_DELIVERED)
     }
 
     private fun changeStatus(order: OrderEntity, request: ChangeStatusRequest, event: EventURN?) {

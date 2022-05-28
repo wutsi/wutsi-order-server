@@ -6,4 +6,7 @@ enum class OrderStatus {
     DONE,
     CANCELLED,
     EXPIRED,
+    READY_FOR_PICKUP,
+    IN_TRANSIT,
+    DELIVERED,
 }

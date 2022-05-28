@@ -4,9 +4,9 @@ import com.wutsi.ecommerce.order.entity.OrderStatus
 import com.wutsi.ecommerce.order.event.EventURN
 import org.junit.jupiter.api.Test
 
-class ChangeStatusControllerDoneTest : AbstractChangeStatusControllerTest() {
-    private val status = OrderStatus.DONE
-    private val event = EventURN.ORDER_DONE
+class ChangeStatusControllerInTransitTest : AbstractChangeStatusControllerTest() {
+    private val status = OrderStatus.IN_TRANSIT
+    private val event = EventURN.ORDER_IN_TRANSIT
 
     @Test
     fun created() {
@@ -15,7 +15,7 @@ class ChangeStatusControllerDoneTest : AbstractChangeStatusControllerTest() {
 
     @Test
     fun opened() {
-        changeStatusSuccess("101", OrderStatus.OPENED, status, event)
+        changeStatusSuccessBadStatus("101", status)
     }
 
     @Test
@@ -40,7 +40,7 @@ class ChangeStatusControllerDoneTest : AbstractChangeStatusControllerTest() {
 
     @Test
     fun inTransit() {
-        changeStatusSuccessBadStatus("106", status)
+        changeStatusSuccess("106", OrderStatus.IN_TRANSIT, status, event)
     }
 
     @Test
