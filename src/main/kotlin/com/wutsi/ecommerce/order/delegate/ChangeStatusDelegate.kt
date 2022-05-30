@@ -189,24 +189,28 @@ public class ChangeStatusDelegate(
 
     private fun trackNewOrder(order: OrderEntity) {
         order.items.forEach {
-            trackingApi.push(
-                request = PushTrackRequest(
-                    track = Track(
-                        time = System.currentTimeMillis(),
-                        tenantId = tracingContext.tenantId(),
-                        deviceId = tracingContext.deviceId(),
-                        productId = it.productId.toString(),
-                        accountId = securityManager.accountId().toString(),
-                        correlationId = tracingContext.traceId(),
-                        merchantId = order.merchantId.toString(),
-                        value = it.quantity * it.unitPrice,
-                        event = EventType.ORDER.name,
-                        ua = httpRequest.getHeader("User-Agent"),
-                        ip = httpRequest.getHeader("X-Forwarded-For") ?: httpRequest.remoteAddr,
-                        referer = httpRequest.getHeader("Referer")
+            try {
+                trackingApi.push(
+                    request = PushTrackRequest(
+                        track = Track(
+                            time = System.currentTimeMillis(),
+                            tenantId = tracingContext.tenantId(),
+                            deviceId = tracingContext.deviceId(),
+                            productId = it.productId.toString(),
+                            accountId = securityManager.accountId().toString(),
+                            correlationId = tracingContext.traceId(),
+                            merchantId = order.merchantId.toString(),
+                            value = it.quantity * it.unitPrice,
+                            event = EventType.ORDER.name,
+                            ua = httpRequest.getHeader("User-Agent"),
+                            ip = httpRequest.getHeader("X-Forwarded-For") ?: httpRequest.remoteAddr,
+                            referer = httpRequest.getHeader("Referer")
+                        )
                     )
                 )
-            )
+            } catch (ex: Exception) {
+                LOGGER.warn("Unable to push tracking event", ex)
+            }
         }
     }
 }
