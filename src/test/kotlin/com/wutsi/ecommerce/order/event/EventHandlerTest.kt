@@ -145,7 +145,7 @@ internal class EventHandlerTest : AbstractEndpointTest() {
         doReturn(SearchTransactionResponse(txs)).whenever(paymentApi).searchTransaction(any())
 
         // WHEN
-        val event = createEvent(EventURN.TRANSACTION_SUCCESSFUL.urn, orderId, TransactionType.PAYMENT)
+        val event = createEvent(EventURN.TRANSACTION_SUCCESSFUL.urn, orderId, TransactionType.CHARGE)
         handler.onEvent(event)
 
         // THEN

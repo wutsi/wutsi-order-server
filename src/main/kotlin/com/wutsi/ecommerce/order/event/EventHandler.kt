@@ -24,17 +24,13 @@ class EventHandler(
     }
 
     private fun onTransactionSuccessful(payload: TransactionEventPayload) {
-        if (payload.type != TransactionType.TRANSFER.name)
+        if (payload.type != TransactionType.CHARGE.name)
             return
 
         logger.add("transaction_id", payload.transactionId)
         logger.add("order_id", payload.orderId)
-        logger.add("accountId", payload.accountId)
-        logger.add("recipient_id", payload.recipientId)
-        logger.add("amount", payload.amount)
-        logger.add("currency", payload.currency)
 
         if (payload.orderId != null)
-            paymentEventHandler.paymentReceived(payload.orderId!!)
+            paymentEventHandler.changeReceived(payload.orderId!!)
     }
 }
