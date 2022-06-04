@@ -18,7 +18,10 @@ class PaymentEventHandler(
      * On payment Received, update the status of the order
      */
     @Transactional
-    fun changeReceived(orderId: String) {
+    fun onCharge(orderId: String?) {
+        if (orderId == null)
+            return
+
         val order = dao.findById(orderId).orElse(null)
             ?: return
 
