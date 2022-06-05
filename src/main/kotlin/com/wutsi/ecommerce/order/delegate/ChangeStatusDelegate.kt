@@ -63,8 +63,13 @@ public class ChangeStatusDelegate(
                     )
                 )
             }
-        logger.add("order_status", order.status)
         securityManager.checkTenant(order)
+
+        changeStatus(order, request)
+    }
+
+    fun changeStatus(order: OrderEntity, request: ChangeStatusRequest) {
+        logger.add("order_status", order.status)
 
         if (order.status.name.equals(request.status, true))
             return // Nothing
@@ -104,8 +109,6 @@ public class ChangeStatusDelegate(
     }
 
     private fun open(order: OrderEntity, request: ChangeStatusRequest) {
-        securityManager.ensureOwner(order)
-
         if (order.status != OrderStatus.CREATED)
             throw invalidStatus(order.status, request)
 
