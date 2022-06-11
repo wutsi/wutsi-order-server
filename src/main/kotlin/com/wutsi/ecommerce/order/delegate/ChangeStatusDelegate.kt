@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
-import javax.servlet.http.HttpServletRequest
 import javax.transaction.Transactional
 
 @Service
@@ -40,7 +39,6 @@ public class ChangeStatusDelegate(
     private val catalogApi: WutsiCatalogApi,
     private val trackingApi: WutsiTrackingApi,
     private val tracingContext: TracingContext,
-    private val httpRequest: HttpServletRequest
 ) {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(ChangeStatusDelegate::class.java)
@@ -205,9 +203,6 @@ public class ChangeStatusDelegate(
                             merchantId = order.merchantId.toString(),
                             value = it.quantity * it.unitPrice,
                             event = EventType.ORDER.name,
-                            ua = httpRequest.getHeader("User-Agent"),
-                            ip = httpRequest.getHeader("X-Forwarded-For") ?: httpRequest.remoteAddr,
-                            referer = httpRequest.getHeader("Referer")
                         )
                     )
                 )
