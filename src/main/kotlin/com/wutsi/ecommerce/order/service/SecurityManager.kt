@@ -18,28 +18,21 @@ class SecurityManager(
         tracingContext.tenantId()?.toLong()
 
     fun accountId(): Long? =
-        if (principal().type == SubjectType.USER)
-            principal().id.toLong()
+        if (principal()?.type == SubjectType.USER)
+            principal()?.id?.toLong()
         else
             null
 
-    private fun principal(): WutsiPrincipal {
+    private fun principal(): WutsiPrincipal? {
         val authentication = SecurityContextHolder.getContext().authentication
+            ?: return null
+
         val principal = authentication.principal
         return principal as WutsiPrincipal
     }
 
-    fun ensureOwner(order: OrderEntity) {
-        if (order.accountId != accountId())
-            throw ForbiddenException(
-                error = Error(
-                    code = ErrorURN.PERMISSION_DENIED.urn
-                )
-            )
-    }
-
     fun checkTenant(order: OrderEntity) {
-        if (principal().type == SubjectType.USER)
+        if (principal()?.type == SubjectType.USER)
             if (order.tenantId != tenantId())
                 throw ForbiddenException(
                     error = Error(
