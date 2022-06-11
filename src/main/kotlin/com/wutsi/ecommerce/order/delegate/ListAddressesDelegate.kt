@@ -12,8 +12,8 @@ public class ListAddressesDelegate(
 ) {
     public fun invoke(): ListAddressResponse {
         val addresses = dao.findByAccountIdAndTenantId(
-            securityManager.accountId(),
-            securityManager.tenantId()
+            securityManager.accountId()!!,
+            securityManager.tenantId()!!
         )
         return ListAddressResponse(
             addresses = addresses.map { it.toAddress() }
