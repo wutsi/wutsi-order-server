@@ -5,6 +5,7 @@ import java.time.OffsetDateTime
 
 public data class Order(
     public val id: String = "",
+    public val tenantId: Long = 0,
     public val merchantId: Long = 0,
     public val accountId: Long = 0,
     public val reservationId: Long? = null,
@@ -24,5 +25,5 @@ public data class Order(
     public val deliveryFees: Double = 0.0,
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     public val expectedDelivered: OffsetDateTime? = null,
-    public val shippingAddress: Address? = null
+    public val shippingAddress: Address? = null,
 )

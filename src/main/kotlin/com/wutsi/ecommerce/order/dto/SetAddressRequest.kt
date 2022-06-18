@@ -11,5 +11,5 @@ public data class SetAddressRequest(
     public val street: String? = null,
     public val cityId: Long? = null,
     public val zipCode: String? = null,
-    public val email: String? = null
+    public val email: String? = null,
 )

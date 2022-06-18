@@ -21,6 +21,7 @@ fun OrderItemEntity.toOrderItem() = OrderItem(
 
 fun OrderEntity.toOrder() = Order(
     id = this.id ?: "",
+    tenantId = this.tenantId,
     merchantId = this.merchantId,
     accountId = this.accountId,
     status = this.status.name,

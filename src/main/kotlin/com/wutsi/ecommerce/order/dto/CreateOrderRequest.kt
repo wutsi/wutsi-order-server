@@ -9,5 +9,5 @@ public data class CreateOrderRequest(
     public val merchantId: Long = 0,
     @get:NotNull
     @get:NotEmpty
-    public val items: List<CreateOrderItem> = emptyList()
+    public val items: List<CreateOrderItem> = emptyList(),
 )

@@ -301,6 +301,10 @@ components:
           type: string
           format: uuid
           description: ID of the order
+        tenantId:
+          type: integer
+          format: int64
+          description: ID of the tenant
         merchantId:
           type: integer
           format: int64

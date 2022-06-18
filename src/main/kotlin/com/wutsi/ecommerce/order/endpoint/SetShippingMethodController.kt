@@ -12,7 +12,7 @@ import kotlin.String
 
 @RestController
 public class SetShippingMethodController(
-    private val `delegate`: SetShippingMethodDelegate
+    public val `delegate`: SetShippingMethodDelegate,
 ) {
     @PostMapping("/v1/orders/{id}/shipping-method")
     @PreAuthorize(value = "hasAuthority('order-manage')")

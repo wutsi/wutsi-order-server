@@ -10,7 +10,7 @@ import kotlin.String
 
 @RestController
 public class GetOrderController(
-    private val `delegate`: GetOrderDelegate
+    public val `delegate`: GetOrderDelegate,
 ) {
     @GetMapping("/v1/orders/{id}")
     @PreAuthorize(value = "hasAuthority('order-read')")

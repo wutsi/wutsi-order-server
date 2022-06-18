@@ -11,7 +11,7 @@ import javax.validation.Valid
 
 @RestController
 public class CreateOrderController(
-    private val `delegate`: CreateOrderDelegate
+    public val `delegate`: CreateOrderDelegate,
 ) {
     @PostMapping("/v1/orders")
     @PreAuthorize(value = "hasAuthority('order-manage')")

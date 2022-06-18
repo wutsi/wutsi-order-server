@@ -12,7 +12,7 @@ import kotlin.String
 
 @RestController
 public class ChangeStatusController(
-    private val `delegate`: ChangeStatusDelegate
+    public val `delegate`: ChangeStatusDelegate,
 ) {
     @PostMapping("/v1/orders/{id}/status")
     @PreAuthorize(value = "hasAuthority('order-manage')")

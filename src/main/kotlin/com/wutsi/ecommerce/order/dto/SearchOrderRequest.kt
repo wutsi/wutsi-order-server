@@ -16,5 +16,5 @@ public data class SearchOrderRequest(
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     public val createdTo: OffsetDateTime? = null,
     public val limit: Int = 30,
-    public val offset: Int = 0
+    public val offset: Int = 0,
 )
