@@ -19,6 +19,7 @@ import com.wutsi.ecommerce.order.dao.OrderStatusRepository
 import com.wutsi.ecommerce.order.dto.CreateOrderItem
 import com.wutsi.ecommerce.order.dto.CreateOrderRequest
 import com.wutsi.ecommerce.order.dto.CreateOrderResponse
+import com.wutsi.ecommerce.order.entity.AddressType
 import com.wutsi.ecommerce.order.entity.OrderStatus
 import com.wutsi.platform.core.error.ErrorResponse
 import org.junit.jupiter.api.Test
@@ -62,7 +63,8 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
                 productId = 12L,
                 quantity = 1,
             ),
-        )
+        ),
+        addressType = AddressType.POSTAL.name
     )
 
     private val products = listOf(
@@ -93,6 +95,7 @@ class CreateOrderControllerTest : AbstractEndpointTest() {
         assertEquals(1200.0, order.totalPrice)
         assertEquals(500.0, order.savingsAmount)
         assertEquals(order.created.plusMinutes(30), order.expires)
+        assertEquals(AddressType.POSTAL, order.addressType)
 
         val items = itemDao.findByOrder(order)
         assertEquals(2, items.size)

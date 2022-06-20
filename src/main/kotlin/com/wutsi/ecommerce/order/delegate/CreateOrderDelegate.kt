@@ -11,6 +11,7 @@ import com.wutsi.ecommerce.order.dao.OrderRepository
 import com.wutsi.ecommerce.order.dao.OrderStatusRepository
 import com.wutsi.ecommerce.order.dto.CreateOrderRequest
 import com.wutsi.ecommerce.order.dto.CreateOrderResponse
+import com.wutsi.ecommerce.order.entity.AddressType
 import com.wutsi.ecommerce.order.entity.OrderEntity
 import com.wutsi.ecommerce.order.entity.OrderItemEntity
 import com.wutsi.ecommerce.order.entity.OrderStatus
@@ -74,7 +75,8 @@ class CreateOrderDelegate(
             deliveryFees = 0.0,
             savingsAmount = savings,
             created = created,
-            expires = created.plusMinutes(30)
+            expires = created.plusMinutes(30),
+            addressType = AddressType.valueOf(request.addressType)
         )
         order.updateTotalPrice()
         orderDao.save(order)
