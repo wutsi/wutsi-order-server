@@ -5,6 +5,7 @@ import com.wutsi.platform.core.error.Error
 import com.wutsi.platform.core.error.exception.ConflictException
 import java.time.OffsetDateTime
 import javax.persistence.Entity
+import javax.persistence.Enumerated
 import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
@@ -44,6 +45,9 @@ data class OrderEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_address_fk")
     var shippingAddress: AddressEntity? = null,
+
+    @Enumerated
+    val addressType: AddressType = AddressType.POSTAL,
 ) {
     fun updateTotalPrice() {
         totalPrice = subTotalPrice + deliveryFees - savingsAmount

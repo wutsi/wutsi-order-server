@@ -177,6 +177,15 @@ paths:
     get:
       operationId: "list-addresses"
       description: List the addresses of the current user
+      parameters:
+        - in: path
+          name: type
+          description: Type of address
+          required: false
+          schema:
+            type: string
+            required: false
+            nullable: true
       responses:
         200:
           description: Success
@@ -192,6 +201,31 @@ paths:
         - Order
       security:
         - api_key: [ 'order-read' ]
+
+    post:
+      operationId: "create-address"
+      description: Create a new address
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAddressRequest'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateAddressResponse'
+        403:
+          description: The caller is not authorized to call this endpoint
+        409:
+          description: Error
+      tags:
+        - Order
+      security:
+        - api_key: [ 'order-manage' ]
 
 components:
   securitySchemes:
@@ -225,8 +259,16 @@ components:
           items:
             $ref: "#/components/schemas/CreateOrderItem"
           description: Items of order
+        addressType:
+          type: string
+          enum:
+            - POSTAL
+            - EMAIL
+          description: Type of address
+          default: POSTAL
       required:
         - items
+        - addressType
 
     CreateOrderResponse:
       type: object
@@ -275,6 +317,7 @@ components:
         country:
           type: string
           description: Country
+          nullable: true
         street:
           type: string
           description: Street address
@@ -293,6 +336,12 @@ components:
           format: email
           description: Email address
           nullable: true
+        type:
+          type: string
+          enum:
+            - POSTAL
+            - EMAIL
+          description: Type of address
 
     Order:
       type: object
@@ -374,6 +423,12 @@ components:
           type: object
           $ref: "#/components/schemas/Address"
           nullable: true
+        addressType:
+          type: string
+          enum:
+            - POSTAL
+            - EMAIL
+          description: Type of address
 
     GetOrderResponse:
       type: object
@@ -483,17 +538,15 @@ components:
           items:
             $ref: "#/components/schemas/OrderSummary"
 
-    SetAddressRequest:
+    CreateAddressRequest:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
-          description: |
-            ID of the address:
-            - If not `null`, the address associated with this ID will be associated with the order
-            - If `null`, a new address will be created and associated with the order
-          nullable: true
+        type:
+          type: string
+          enum:
+            - POSTAL
+            - EMAIL
+          description: Type of address
         firstName:
           type: string
           description: Customer First Name
@@ -503,6 +556,7 @@ components:
         country:
           type: string
           description: Country code
+          nullable: true
         street:
           type: string
           description: Street address
@@ -519,8 +573,27 @@ components:
         email:
           type: string
           format: email
-          description: Email address
           nullable: true
+          description: Email address
+      required:
+        - type
+        - firstName
+        - lastName
+
+    CreateAddressResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+
+    SetAddressRequest:
+      type: object
+      properties:
+        addressId:
+          type: integer
+          format: int64
+          description: ID of the address
 
     SetShippingMethodRequest:
       type: object

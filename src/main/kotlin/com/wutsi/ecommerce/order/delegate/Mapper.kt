@@ -39,6 +39,7 @@ fun OrderEntity.toOrder() = Order(
     shippingAddress = this.shippingAddress?.toAddress(),
     paymentStatus = this.paymentStatus.name,
     totalPaid = this.totalPaid,
+    addressType = this.addressType.name,
 )
 
 fun OrderEntity.toOrderSummary() = OrderSummary(
@@ -66,5 +67,6 @@ fun AddressEntity.toAddress() = Address(
     cityId = this.cityId,
     country = this.country,
     street = this.street,
-    zipCode = this.zipCode
+    zipCode = this.zipCode,
+    type = this.type.name
 )

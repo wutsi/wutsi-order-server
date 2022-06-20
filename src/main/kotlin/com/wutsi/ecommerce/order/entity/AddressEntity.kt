@@ -1,6 +1,7 @@
 package com.wutsi.ecommerce.order.entity
 
 import javax.persistence.Entity
+import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
@@ -18,9 +19,12 @@ data class AddressEntity(
 
     val firstName: String = "",
     val lastName: String = "",
-    val country: String = "",
+    val country: String? = null,
     val street: String? = null,
     val cityId: Long? = null,
     val zipCode: String? = null,
-    val email: String? = null
+    val email: String? = null,
+
+    @Enumerated
+    val type: AddressType = AddressType.POSTAL,
 )

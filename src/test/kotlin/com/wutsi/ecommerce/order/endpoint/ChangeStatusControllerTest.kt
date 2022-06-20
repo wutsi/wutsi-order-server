@@ -2,8 +2,7 @@ package com.wutsi.ecommerce.order.endpoint
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
-import kotlin.Int
+import org.springframework.boot.test.web.server.LocalServerPort
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ChangeStatusControllerTest {

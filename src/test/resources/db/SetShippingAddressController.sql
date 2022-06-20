@@ -1,7 +1,7 @@
-INSERT INTO T_ADDRESS(id, account_id, tenant_id, city_id, country)
+INSERT INTO T_ADDRESS(id, account_id, tenant_id, city_id, country, first_name, last_name)
     VALUES
-        (200, 1, 1, 1000, 'CM'),
-        (300, 2, 1, 1000, 'CM')
+        (200, 1, 1, 1000, 'CM', 'Yo', 'Man'),
+        (300, 2, 1, 1000, 'CM', 'Ray', 'Sponsible')
 ;
 
 

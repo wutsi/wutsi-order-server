@@ -1,7 +1,6 @@
 package com.wutsi.ecommerce.order.endpoint
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.wutsi.ecommerce.order.dao.AddressRepository
 import com.wutsi.ecommerce.order.dao.OrderRepository
 import com.wutsi.ecommerce.order.dto.SetAddressRequest
 import com.wutsi.platform.core.error.ErrorResponse
@@ -9,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpClientErrorException
 import kotlin.test.assertEquals
@@ -23,41 +22,11 @@ public class SetShippingAddressControllerTest : AbstractEndpointTest() {
     @Autowired
     private lateinit var orderDao: OrderRepository
 
-    @Autowired
-    private lateinit var addressDao: AddressRepository
-
-    @Test
-    public fun create() {
-        val url = "http://localhost:$port/v1/orders/100/shipping-address"
-        val request = SetAddressRequest(
-            firstName = "Ray",
-            lastName = "Sponsible",
-            email = "ray.sponsible@gmail.com",
-            cityId = 1111,
-            country = "CM",
-            street = "This is nice",
-            zipCode = "111"
-        )
-        val response = rest.postForEntity(url, request, Any::class.java)
-
-        assertEquals(200, response.statusCodeValue)
-
-        val order = orderDao.findById("100").get()
-        val address = addressDao.findById(order.shippingAddress?.id).get()
-        assertEquals(request.firstName, address.firstName)
-        assertEquals(request.lastName, address.lastName)
-        assertEquals(request.email, address.email)
-        assertEquals(request.cityId, address.cityId)
-        assertEquals(request.country, address.country)
-        assertEquals(request.street, address.street)
-        assertEquals(request.zipCode, address.zipCode)
-    }
-
     @Test
     fun update() {
         val url = "http://localhost:$port/v1/orders/200/shipping-address"
         val request = SetAddressRequest(
-            id = 200
+            addressId = 200
         )
         val response = rest.postForEntity(url, request, Any::class.java)
 
@@ -71,7 +40,7 @@ public class SetShippingAddressControllerTest : AbstractEndpointTest() {
     fun illegalAccess() {
         val url = "http://localhost:$port/v1/orders/200/shipping-address"
         val request = SetAddressRequest(
-            id = 300
+            addressId = 300
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url, request, Any::class.java)
@@ -87,7 +56,7 @@ public class SetShippingAddressControllerTest : AbstractEndpointTest() {
     fun notFound() {
         val url = "http://localhost:$port/v1/orders/200/shipping-address"
         val request = SetAddressRequest(
-            id = 99999
+            addressId = 99999
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url, request, Any::class.java)

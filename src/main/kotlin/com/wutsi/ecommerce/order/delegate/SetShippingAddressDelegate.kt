@@ -42,34 +42,19 @@ class SetShippingAddressDelegate(
     }
 
     private fun getAddress(order: OrderEntity, request: SetAddressRequest): AddressEntity {
-        val address = if (request.id != null)
-            addressDao.findById(request.id)
-                .orElseThrow {
-                    NotFoundException(
-                        error = Error(
-                            code = ErrorURN.ADDRESS_NOT_FOUND.urn,
-                            parameter = Parameter(
-                                name = "id",
-                                value = request.id,
-                                type = ParameterType.PARAMETER_TYPE_PAYLOAD
-                            )
+        val address = addressDao.findById(request.addressId)
+            .orElseThrow {
+                NotFoundException(
+                    error = Error(
+                        code = ErrorURN.ADDRESS_NOT_FOUND.urn,
+                        parameter = Parameter(
+                            name = "addressId",
+                            value = request.addressId,
+                            type = ParameterType.PARAMETER_TYPE_PAYLOAD
                         )
                     )
-                }
-        else
-            addressDao.save(
-                AddressEntity(
-                    firstName = request.firstName,
-                    lastName = request.lastName,
-                    zipCode = request.zipCode,
-                    street = request.street,
-                    country = request.country,
-                    cityId = request.cityId,
-                    accountId = order.accountId,
-                    tenantId = order.tenantId,
-                    email = request.email,
                 )
-            )
+            }
 
         if (address.accountId != order.accountId || address.tenantId != order.tenantId)
             throw ForbiddenException(

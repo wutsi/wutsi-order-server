@@ -26,4 +26,5 @@ public data class Order(
     @get:DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     public val expectedDelivered: OffsetDateTime? = null,
     public val shippingAddress: Address? = null,
+    public val addressType: String = "",
 )
